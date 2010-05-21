@@ -1,0 +1,10 @@
+<project name="JoshuaTasks">
+    <property name="classes.dir" value="/Users/lane/Research/brainstorm/Joshua Trunk/bin"/>
+    
+    <taskdef name="extractRules" classname="joshua.prefix_tree.ExtractRules" classpath="${classes.dir}"/>
+    
+    <taskdef name="compileJosh" classname="joshua.corpus.suffix_array.Compile" classpath="${classes.dir}"/>
+    
+	<taskdef name="writeLexProbs" classname="joshua.corpus.lexprob.WriteLexProbs" classpath="${classes.dir}"/>
+	
+</project>

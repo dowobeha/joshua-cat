@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="ExtractRules" basedir="." default="training/europarl.es-en.josh">
+
+	<import file="tasks.xml"/>
+
+	<!--<property name="data.set" value="10"/>-->
+	<property name="data.set" value="10000"/>
+	<property name="data.dir" value="/Users/lane/Research/brainstorm/Joshua Scratch/data"/>
+	
+    <target name="training/europarl.es-en.josh">
+    	<compileJosh
+    		sourceCorpus="${data.dir}/europarl.es.${data.set}"
+    		targetCorpus="${data.dir}/europarl.en.${data.set}"
+    		alignments="${data.dir}/europarl.es-en.aln.${data.set}"
+    		outputDir="${data.dir}/europarl.es-en.${data.set}.josh"
+    	/>    	
+   
+    </target>
+	
+	
+ </project>
