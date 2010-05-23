@@ -9,6 +9,7 @@ import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.util.List;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -150,7 +151,8 @@ public class Scratch {
 					}
 
 					//				String[] petStrings = { "Bird", "Cat", "Dog", "Rabbit", "Pig" };
-					JComboBox comboBox = new JComboBox(strings);
+					JComboBox comboBox = new JComboBox(new DefaultComboBoxModel(strings));
+					comboBox.setEditable(true);
 					comboBoxes[row][cell] = comboBox;
 					for (Component component : comboBox.getComponents()) {
 						component.addMouseListener(listener);
@@ -166,7 +168,7 @@ public class Scratch {
 					System.err.println("comboBox["+row+"]["+cell+"] is at ("+comboBox.getX()+","+comboBox.getY()+") - ("+(comboBox.getX()+comboBox.getWidth())+","+(comboBox.getY()+comboBox.getHeight())+")");
 //					System.err.println("comboBox["+row+"]["+cell+"] is at + " + comboBox.getVisibleRect());
 					
-					comboBox.setEnabled(false);
+					//comboBox.setEnabled(false);
 					//				JLabel label = new JLabel(" R" + row + ",C"+cell);
 					//				label.setBorder(BorderFactory.createLineBorder(Color.black));
 					//				pane.add(label,c);
@@ -242,7 +244,7 @@ public class Scratch {
 
 		public void mouseExited(MouseEvent e) {
 			if (comboBoxEvent(e)) {
-				e.getComponent().getParent().setEnabled(false);
+				//e.getComponent().getParent().setEnabled(false);
 			}
 		}
 
