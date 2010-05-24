@@ -1,34 +1,42 @@
 package good;
 
 
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
 
 
 
 @SuppressWarnings("serial")
 public class Panel extends JPanel {
 
-	public Panel(JComponent parent, String[] args, int spanLimit, TranslationOptions... translationsList) {
+	public Panel(Container parent, String[] args, int spanLimit, TranslationOptions... translationsList) {
 		this(parent, args, spanLimit, Arrays.asList(translationsList));
 	}
 	
-	public Panel(JComponent parent, String[] args, int spanLimit, List<TranslationOptions> translationsList) {
+	public Panel(Container parent, String[] args, int spanLimit, List<TranslationOptions> translationsList) {
 		super(new GridBagLayout());
 		
 		JScrollPane scrollPane = new JScrollPane(this);
-//		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-//		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+		
+		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+//		int emptyScrollPaneHeight = scrollPane.getHeight();
+		
 		parent.add(scrollPane);
 		
 		for (int i=0; i<args.length*2; i++) {
@@ -121,6 +129,16 @@ public class Panel extends JPanel {
 
 			}
 		}
+		
+		
+		
+//		int height = emptyScrollPaneHeight + (int) parent.getMinimumSize().getHeight();
+//		int width = (int) scrollPane.getPreferredSize().getWidth();
+//		Dimension size = new Dimension(width, height);
+//		
+//		scrollPane.setPreferredSize(size);
+//		scrollPane.setSize(size);
+		
 	}
 	
 	
@@ -137,12 +155,22 @@ public class Panel extends JPanel {
 		
 		JFrame window = new JFrame();
 		JPanel parent = new JPanel();
+		parent.setLayout(new BoxLayout(parent, BoxLayout.PAGE_AXIS));
 		window.setContentPane(parent);
 		window.setVisible(true);
-		window.pack();
 		
-		new Panel(parent,sourceText.iterator().next().split(" "),spanLimit,translations);
-//		new Panel(parent,sourceText.iterator().next().split(" "),spanLimit,translations);
+		Iterator<String> iterator = sourceText.iterator();
+		iterator.next();
+		String line2 = iterator.next();
+		
+		new Panel(parent,line2.split(" "),spanLimit,translations);
+		new Panel(parent,line2.split(" "),spanLimit,translations);
 
+		window.pack();
+		double displayWidth = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().getBounds().getWidth();
+		window.setSize((int) displayWidth, window.getHeight());
+		window.setVisible(true);
+		
+		
 	}
 }
