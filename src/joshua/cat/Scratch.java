@@ -4,12 +4,12 @@ import java.awt.Component;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
-import java.util.List;
 
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -20,8 +20,6 @@ import javax.swing.ScrollPaneConstants;
 
 import joshua.corpus.suffix_array.ParallelCorpusGrammarFactory;
 import joshua.corpus.vocab.SymbolTable;
-import joshua.decoder.ff.tm.Rule;
-import joshua.decoder.ff.tm.RuleCollection;
 import joshua.decoder.ff.tm.Trie;
 import joshua.prefix_tree.ExtractRules;
 import joshua.prefix_tree.PrefixTree;
@@ -139,8 +137,28 @@ public class Scratch {
 							}
 						}
 						
-						TranslationOptionsModel model = new TranslationOptionsModel(trieNode,vocab);
-						DefaultListModel model2 = new DefaultListModel();
+						final TranslationOptionsModel model = new TranslationOptionsModel(trieNode,vocab);
+
+						ActionListener l = new ActionListener() {
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								JComboBox cb = (JComboBox)e.getSource();
+								
+								
+								Object newSelection = cb.getEditor().getItem();
+								if (newSelection != null) {
+//									System.err.println("item=="+item+"	index==" + index + ". newSelection is NOT null: " + newSelection);
+									if (! model.contains(newSelection)) {
+										model.insertElementAt(newSelection,0);
+									} 
+								} 
+//								else {
+//									System.err.println("item=="+item+"	index==" + index + ". newSelection is null");
+//								}
+							}
+						};
+						
+						//						DefaultListModel model2 = new DefaultListModel();
 						//
 //						if (trieNode == null) {
 //							strings = new String[0];
@@ -159,6 +177,7 @@ public class Scratch {
 //					JComboBox comboBox = new JComboBox(new DefaultComboBoxModel(strings));
 					JComboBox comboBox = new JComboBox(model);
 					comboBox.setEditable(true);
+					comboBox.addActionListener(l);
 					comboBoxes[row][cell] = comboBox;
 					for (Component component : comboBox.getComponents()) {
 						component.addMouseListener(listener);
@@ -226,6 +245,8 @@ public class Scratch {
 		}
 		
 	}
+	
+	
 
 	static class Listener implements MouseListener {
 

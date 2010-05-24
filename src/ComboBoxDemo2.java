@@ -33,11 +33,11 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.border.*;
 import java.util.*;
 import java.text.SimpleDateFormat;
 
 /* ComboBoxDemo2.java requires no other files. */
+@SuppressWarnings("serial")
 public class ComboBoxDemo2 extends JPanel
                            implements ActionListener {
     static JFrame frame;
