@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -126,8 +127,9 @@ public class Scratch {
 					c.fill = GridBagConstraints.HORIZONTAL;
 					//				System.err.println(c.gridx);
 
-					String[] strings;
-					{
+					
+//					String[] strings;
+//					{
 						Trie trieNode = grammar;
 						for (int wordIndex=cell, lastIndex=cell+row; wordIndex<=lastIndex; wordIndex++) {
 							if (trieNode==null) {
@@ -136,22 +138,26 @@ public class Scratch {
 								trieNode = trieNode.matchOne(sentence[wordIndex]);
 							}
 						}
-
-						if (trieNode == null) {
-							strings = new String[0];
-						} else {
-							RuleCollection ruleCollection = trieNode.getRules();
-							List<Rule> rules = ruleCollection.getRules();
-							strings = new String[rules.size()];
-							for (int i=0, n=rules.size(); i<n; i++) {
-								int[] translation = rules.get(i).getEnglish();
-								strings[i] = vocab.getWords(translation);
-							}
-						}
-					}
-
-					//				String[] petStrings = { "Bird", "Cat", "Dog", "Rabbit", "Pig" };
-					JComboBox comboBox = new JComboBox(new DefaultComboBoxModel(strings));
+						
+						TranslationOptionsModel model = new TranslationOptionsModel(trieNode,vocab);
+						DefaultListModel model2 = new DefaultListModel();
+						//
+//						if (trieNode == null) {
+//							strings = new String[0];
+//						} else {
+//							RuleCollection ruleCollection = trieNode.getRules();
+//							List<Rule> rules = ruleCollection.getRules();
+//							strings = new String[rules.size()];
+//							for (int i=0, n=rules.size(); i<n; i++) {
+//								int[] translation = rules.get(i).getEnglish();
+//								strings[i] = vocab.getWords(translation);
+//							}
+//						}
+//					}
+//
+//					//				String[] petStrings = { "Bird", "Cat", "Dog", "Rabbit", "Pig" };
+//					JComboBox comboBox = new JComboBox(new DefaultComboBoxModel(strings));
+					JComboBox comboBox = new JComboBox(model);
 					comboBox.setEditable(true);
 					comboBoxes[row][cell] = comboBox;
 					for (Component component : comboBox.getComponents()) {
