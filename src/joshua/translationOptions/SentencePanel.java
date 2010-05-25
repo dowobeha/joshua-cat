@@ -7,7 +7,6 @@ import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -23,59 +22,25 @@ import javax.swing.ScrollPaneConstants;
 public class SentencePanel extends JPanel {
 
 	private final int displayWidth;
-	private final int numRows;
-//	private final String[] words;
 	
-	private final ComboBoxModel[][] models;
+	private final SentencePanelModel model;
 	
-	public SentencePanel(String[] words, int spanLimit, TranslationOptions... translationsList) {
-		this(words,spanLimit,Arrays.asList(translationsList));
-	}
-	
-	public SentencePanel(String[] words, int spanLimit, List<TranslationOptions> translationsList) {
+
+	public SentencePanel(SentencePanelModel model) {
 		this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-//		this.words = words;
-		this.numRows=Math.min(words.length, spanLimit);
 		this.displayWidth = getMaxDisplayWidth();
 		
-		// Initialize chart model
-		{
-			this.models = new ComboBoxModel[numRows][];
-
-			// Add rows to chart model
-			for (int row=0; row<numRows; row+=1) {
-				
-				int numCells=words.length-row;
-				this.models[row] = new ComboBoxModel[numCells];
-				
-				// Add cells to chart model
-				for (int cell=0; cell<numCells; cell+=1) {
-
-					StringBuilder sourcePhraseBuilder = new StringBuilder();
-					for (int wordIndex=cell, lastIndex=cell+row; wordIndex<=lastIndex; wordIndex++) {
-						if (wordIndex>cell) {
-							sourcePhraseBuilder.append(' ');
-						}
-						sourcePhraseBuilder.append(words[wordIndex]);
-					}
-					ComboBoxModel model = new ComboBoxModel(sourcePhraseBuilder.toString(), translationsList);
-					this.models[row][cell] = model;
-					
-				}
-
-			}
-
-		}
+		this.model = model;
 		
 		
-		ChildScrollPane panel = new ChildScrollPane(words,spanLimit,translationsList);
+		ChildScrollPane panel = new ChildScrollPane(model.getWords());
 		int totalWidth = (int) panel.getPreferredSize().getWidth();
 		int extra=displayWidth*2/3;
 		List<ChildScrollPane> panels = new ArrayList<ChildScrollPane>();
 		panels.add(panel);
 		this.add(panel);
 		for (int x=displayWidth; x+extra<totalWidth; x+=displayWidth) {
-			panel = new ChildScrollPane(words,spanLimit,translationsList);
+			panel = new ChildScrollPane(model.getWords());
 			panels.add(panel);
 			this.add(panel);
 		}
@@ -109,10 +74,10 @@ public class SentencePanel extends JPanel {
 		Iterator<String> iterator = sourceText.iterator();
 		iterator.next();
 		String line2 = iterator.next();
-		String[] sentence = line2.split(" ");
 		
 		JFrame window = new JFrame();
-		SentencePanel parent = new SentencePanel(sentence,spanLimit,translations);
+		SentencePanelModel model = new SentencePanelModel(line2,spanLimit,translations);
+		SentencePanel parent = new SentencePanel(model);
 		window.setContentPane(parent);
 		window.pack();
 		window.setVisible(true);
@@ -122,9 +87,9 @@ public class SentencePanel extends JPanel {
 	
 	private class ChildScrollPane extends JScrollPane {
 		
-		ChildScrollPane(String[] args, int spanLimit, List<TranslationOptions> translationsList) {
+		ChildScrollPane(String[] args) {
 			super(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-			setViewportView(new ChildPanel(args,spanLimit,translationsList));
+			setViewportView(new ChildPanel(args));
 		}
 		
 	}
@@ -133,7 +98,7 @@ public class SentencePanel extends JPanel {
 
 		final JComboBox[][] comboBoxes;
 		
-		public ChildPanel(String[] args, int spanLimit, List<TranslationOptions> translationsList) {
+		public ChildPanel(String[] args) {
 			super(new GridBagLayout());
 			
 			for (int i=0; i<args.length*2; i++) {
@@ -165,6 +130,8 @@ public class SentencePanel extends JPanel {
 			
 			
 			{
+				int numRows = model.getNumRows();
+				
 				comboBoxes = new JComboBox[numRows][];
 
 				// Add rows to chart
@@ -184,7 +151,7 @@ public class SentencePanel extends JPanel {
 						c.weightx = 1;
 						c.fill = GridBagConstraints.HORIZONTAL;
 
-						JComboBox comboBox = new JComboBox(models[row][cell]);
+						JComboBox comboBox = new JComboBox(model.getComboBoxModel(row,cell));
 						comboBox.setEditable(true);
 						comboBoxes[row][cell] = comboBox;
 						this.add(comboBox,c);
