@@ -2,11 +2,12 @@ package good;
 
 
 import java.awt.Container;
-import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Point;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -24,6 +25,8 @@ import javax.swing.ScrollPaneConstants;
 @SuppressWarnings("serial")
 public class Panel extends JPanel {
 
+	final JScrollPane scrollPane;
+	
 	public Panel(Container parent, String[] args, int spanLimit, TranslationOptions... translationsList) {
 		this(parent, args, spanLimit, Arrays.asList(translationsList));
 	}
@@ -31,7 +34,7 @@ public class Panel extends JPanel {
 	public Panel(Container parent, String[] args, int spanLimit, List<TranslationOptions> translationsList) {
 		super(new GridBagLayout());
 		
-		JScrollPane scrollPane = new JScrollPane(this);
+		scrollPane = new JScrollPane(this);
 		
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
@@ -67,8 +70,8 @@ public class Panel extends JPanel {
 			//			label.setBorder(BorderFactory.createLineBorder(Color.black));
 			this.add(label,c);
 			this.doLayout();
-			parent.setVisible(true);
-			System.err.println("label["+i+"] is at ("+label.getX()+","+label.getY()+") - ("+(label.getX()+label.getWidth())+","+(label.getY()+label.getHeight())+")");
+//			parent.setVisible(true);
+			//System.err.println("label["+i+"] is at ("+label.getX()+","+label.getY()+") - ("+(label.getX()+label.getWidth())+","+(label.getY()+label.getHeight())+")");
 //			
 		}
 		
@@ -118,7 +121,7 @@ public class Panel extends JPanel {
 					parent.setVisible(true);
 					
 //					Component component = comboBox.getEditor().getEditorComponent();
-					System.err.println("comboBox["+row+"]["+cell+"] is at ("+comboBox.getX()+","+comboBox.getY()+") - ("+(comboBox.getX()+comboBox.getWidth())+","+(comboBox.getY()+comboBox.getHeight())+")");
+					//System.err.println("comboBox["+row+"]["+cell+"] is at ("+comboBox.getX()+","+comboBox.getY()+") - ("+(comboBox.getX()+comboBox.getWidth())+","+(comboBox.getY()+comboBox.getHeight())+")");
 //					System.err.println("comboBox["+row+"]["+cell+"] is at + " + comboBox.getVisibleRect());
 					
 					//comboBox.setEnabled(false);
@@ -128,6 +131,9 @@ public class Panel extends JPanel {
 				}
 
 			}
+
+			
+			
 		}
 		
 		
@@ -157,20 +163,65 @@ public class Panel extends JPanel {
 		JPanel parent = new JPanel();
 		parent.setLayout(new BoxLayout(parent, BoxLayout.PAGE_AXIS));
 		window.setContentPane(parent);
-		window.setVisible(true);
+//		window.setVisible(true);
 		
 		Iterator<String> iterator = sourceText.iterator();
 		iterator.next();
 		String line2 = iterator.next();
 		
-		new Panel(parent,line2.split(" "),spanLimit,translations);
-		new Panel(parent,line2.split(" "),spanLimit,translations);
-
-		window.pack();
-		double displayWidth = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().getBounds().getWidth();
-		window.setSize((int) displayWidth, window.getHeight());
-		window.setVisible(true);
+		int displayWidth = (int) GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().getBounds().getWidth();
+//		System.out.println("displayWidth=="+displayWidth);
+		Panel panel = new Panel(parent,line2.split(" "),spanLimit,translations);
+		int totalWidth = (int) panel.getPreferredSize().getWidth();
+//		System.out.println(panel.getPreferredSize());
+//		System.out.println(panel.getSize());
+//		window.pack();
+//		int totalWidth=panel.getWidth();
+		int extra=displayWidth*2/3;
+//		window.setVisible(false);
+		List<Panel> panels = new ArrayList<Panel>();
+		panels.add(panel);
+		for (int x=displayWidth; x+extra<totalWidth; x+=displayWidth) {
+//			System.out.println("x=="+x+"\ttotalWidth=="+totalWidth);
+			panel = new Panel(parent,line2.split(" "),spanLimit,translations);
+			panels.add(panel);
+		}
 		
+		window.pack();
+//		System.out.println(panel.getSize());
+		window.setSize((int) displayWidth, window.getHeight());
+//		System.out.println(panel.getSize());
+		
+//		System.out.println(panel.getSize());
+		
+		for (int x=displayWidth; x+extra<totalWidth; x+=displayWidth) {
+//			panel = new Panel(parent,line2.split(" "),spanLimit,translations);
+//			window.pack();
+//			window.setSize((int) displayWidth, window.getHeight());
+//			window.setVisible(true);
+			panels.get(x/displayWidth).scrollPane.getViewport().setViewPosition(new Point(x,0));
+		}
+		window.setVisible(true);
+//		
+//		
+//		Panel panel2 = new Panel(parent,line2.split(" "),spanLimit,translations);
+//		Panel panel3 = new Panel(parent,line2.split(" "),spanLimit,translations);
+//		Panel panel4 = new Panel(parent,line2.split(" "),spanLimit,translations);
+//
+//		
+//		
+//		System.err.println("Before:\t" + panel2.scrollPane.getViewport().getViewRect().getWidth());
+////		System.err.println("Visrec:\t" + panel2.scrollPane.getVisibleRect());
+//		
+////		panel2.scrollPane.scrollRectToVisible(new Rectangle(1276*2,0,1276*2+1,0));
+//		System.out.println(panel1.getSize());
+//		panel1.scrollPane.getViewport().setViewPosition(new Point(0,0));
+//		panel2.scrollPane.getViewport().setViewPosition(new Point(1276,0));
+//		panel3.scrollPane.getViewport().setViewPosition(new Point(1276*2,0));
+//		panel4.scrollPane.getViewport().setViewPosition(new Point(1276*3,0));
+//		
+////		System.err.println("After:\t" + panel2.scrollPane.getViewport().getViewRect());
+////		System.err.println("Visrec:\t" + panel2.scrollPane.getVisibleRect());
 		
 	}
 }
