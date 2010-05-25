@@ -7,6 +7,7 @@ import com.google.common.base.Preconditions;
 
 public class SentencePanelModel {
 
+	private final String sentence;
 	private final String[] words;
 //	private final List<TranslationOptions> translationsList;
 //	private final int spanLimit;
@@ -23,6 +24,7 @@ public class SentencePanelModel {
 		Preconditions.checkState(spanLimit > 0);
 		Preconditions.checkNotNull(translationsList);
 		
+		this.sentence = sentence;
 		this.words = sentence.split("\\s+");
 //		this.spanLimit = spanLimit;
 //		this.translationsList = translationsList;
@@ -75,6 +77,10 @@ public class SentencePanelModel {
 	
 	public int getNumRows() {
 		return this.numRows;
+	}
+	
+	public String getSentence() {
+		return this.sentence;
 	}
 	
 }

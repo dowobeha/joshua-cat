@@ -1,5 +1,6 @@
 package joshua.cat.options;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
@@ -18,6 +19,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 
 @SuppressWarnings("serial")
@@ -25,6 +27,8 @@ public class SentencePanel extends JPanel {
 
 	private static final Logger logger =
 		Logger.getLogger(SentencePanel.class.getName());
+	
+	private static final Color LIGHT_RED = new Color(255,0,0,100);
 	
 	private final int displayWidth;
 	
@@ -40,6 +44,11 @@ public class SentencePanel extends JPanel {
 		
 		this.model = model;
 		
+		JTextArea sourceTextArea = new JTextArea(model.getSentence());
+		sourceTextArea.setLineWrap(true);
+		sourceTextArea.setWrapStyleWord(true);
+		sourceTextArea.setEditable(false);
+		this.add(new JScrollPane(sourceTextArea));
 		
 		ChildScrollPane panel = new ChildScrollPane(model.getWords());
 		int totalWidth = (int) panel.getPreferredSize().getWidth();
@@ -80,7 +89,7 @@ public class SentencePanel extends JPanel {
 	}
 	
 	private class ChildPanel extends JPanel {
-
+		
 		final JComboBox[][] comboBoxes;
 		
 		private ChildPanel(String[] args) {
@@ -110,6 +119,8 @@ public class SentencePanel extends JPanel {
 				c.fill = GridBagConstraints.HORIZONTAL;
 
 				JLabel label = new JLabel(args[i], JLabel.CENTER);
+				label.setOpaque(true);
+				label.setBackground(LIGHT_RED);
 				this.add(label,c);
 				this.doLayout();
 			}
