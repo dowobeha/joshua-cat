@@ -154,15 +154,15 @@ public class SentencePanel extends JPanel {
 	
 	private class ComboBox extends JComboBox {
 		
-		private final int row;
-		private final int cell;
+//		private final int row;
+//		private final int cell;
 		
 		private ComboBox(int row, int cell) {
 			super(model.getComboBoxModel(row, cell));
 			setEditable(false);
 			setEnabled(false);
-			this.row = row;
-			this.cell = cell;
+//			this.row = row;
+//			this.cell = cell;
 			
 			for (Component component : getComponents()) {
 				component.addMouseListener(mouseListener);
