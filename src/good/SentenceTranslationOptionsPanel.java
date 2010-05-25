@@ -25,6 +25,8 @@ public class SentenceTranslationOptionsPanel extends JPanel {
 	private final int displayWidth;
 	private final int numRows;
 	
+	private final TranslationOptionsComboBoxModel[][] models;
+	
 	public SentenceTranslationOptionsPanel(String[] args, int spanLimit, TranslationOptions... translationsList) {
 		this(args,spanLimit,Arrays.asList(translationsList));
 	}
@@ -33,6 +35,36 @@ public class SentenceTranslationOptionsPanel extends JPanel {
 		this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 		this.numRows=Math.min(args.length, spanLimit);
 		this.displayWidth = getMaxDisplayWidth();
+		
+		// Initialize chart model
+		{
+			this.models = new TranslationOptionsComboBoxModel[numRows][];
+
+			// Add rows to chart model
+			for (int row=0; row<numRows; row+=1) {
+				
+				int numCells=args.length-row;
+				this.models[row] = new TranslationOptionsComboBoxModel[numCells];
+				
+				// Add cells to chart model
+				for (int cell=0; cell<numCells; cell+=1) {
+
+					StringBuilder sourcePhraseBuilder = new StringBuilder();
+					for (int wordIndex=cell, lastIndex=cell+row; wordIndex<=lastIndex; wordIndex++) {
+						if (wordIndex>cell) {
+							sourcePhraseBuilder.append(' ');
+						}
+						sourcePhraseBuilder.append(args[wordIndex]);
+					}
+					TranslationOptionsComboBoxModel model = new TranslationOptionsComboBoxModel(sourcePhraseBuilder.toString(), translationsList);
+					this.models[row][cell] = model;
+					
+				}
+
+			}
+
+		}
+		
 		
 		ChildScrollPane panel = new ChildScrollPane(args,spanLimit,translationsList);
 		int totalWidth = (int) panel.getPreferredSize().getWidth();
@@ -131,7 +163,6 @@ public class SentenceTranslationOptionsPanel extends JPanel {
 			
 			
 			{
-				 
 				comboBoxes = new JComboBox[numRows][];
 
 				// Add rows to chart
@@ -151,18 +182,11 @@ public class SentenceTranslationOptionsPanel extends JPanel {
 						c.weightx = 1;
 						c.fill = GridBagConstraints.HORIZONTAL;
 
-						StringBuilder sourcePhraseBuilder = new StringBuilder();
-						for (int wordIndex=cell, lastIndex=cell+row; wordIndex<=lastIndex; wordIndex++) {
-							if (wordIndex>cell) {
-								sourcePhraseBuilder.append(' ');
-							}
-							sourcePhraseBuilder.append(args[wordIndex]);
-						}
-						Model model = new Model(sourcePhraseBuilder.toString(), translationsList);
-						JComboBox comboBox = new JComboBox(model);
+						JComboBox comboBox = new JComboBox(models[row][cell]);
 						comboBox.setEditable(true);
 						comboBoxes[row][cell] = comboBox;
 						this.add(comboBox,c);
+						
 						this.doLayout();
 					}
 

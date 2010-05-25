@@ -7,16 +7,16 @@ import javax.swing.DefaultComboBoxModel;
 
 
 @SuppressWarnings("serial")
-public class Model extends DefaultComboBoxModel {
+public class TranslationOptionsComboBoxModel extends DefaultComboBoxModel {
 
 	private final List<TranslationOptions> translationsList;
 	private final String sourcePhrase;
 	
-	public Model(String sourcePhrase, TranslationOptions... translationsList) {
+	public TranslationOptionsComboBoxModel(String sourcePhrase, TranslationOptions... translationsList) {
 		this(sourcePhrase,Arrays.asList(translationsList));
 	}
 	
-	public Model(String sourcePhrase, List<TranslationOptions> translationsList) {
+	public TranslationOptionsComboBoxModel(String sourcePhrase, List<TranslationOptions> translationsList) {
 		this.translationsList = translationsList;
 		this.sourcePhrase = sourcePhrase;
 		
