@@ -1,4 +1,4 @@
-package joshua.translationOptions;
+package joshua.cat.options;
 
 import java.io.IOException;
 import java.util.ArrayList;

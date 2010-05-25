@@ -1,4 +1,4 @@
-package joshua.translationOptions;
+package joshua.cat.options;
 
 import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;

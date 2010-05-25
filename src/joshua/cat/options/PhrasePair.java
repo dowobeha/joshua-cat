@@ -1,4 +1,4 @@
-package joshua.translationOptions;
+package joshua.cat.options;
 
 public class PhrasePair {
 
