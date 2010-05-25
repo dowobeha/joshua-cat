@@ -193,8 +193,11 @@ public class TextAreaDemo extends JFrame
         
         public void run() {
             textArea.insert(completion, position);
+            
+            // Select the text
             textArea.setCaretPosition(position + completion.length());
             textArea.moveCaretPosition(position);
+            
             mode = Mode.COMPLETION;
         }
     }
