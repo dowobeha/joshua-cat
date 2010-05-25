@@ -1,4 +1,4 @@
-package good;
+package joshua.translationOptions;
 
 
 import good.maybe.TranslationOptionsListener;

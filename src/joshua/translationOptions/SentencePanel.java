@@ -1,4 +1,4 @@
-package good;
+package joshua.translationOptions;
 
 import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
@@ -20,31 +20,33 @@ import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 
 @SuppressWarnings("serial")
-public class SentenceTranslationOptionsPanel extends JPanel {
+public class SentencePanel extends JPanel {
 
 	private final int displayWidth;
 	private final int numRows;
+//	private final String[] words;
 	
-	private final TranslationOptionsComboBoxModel[][] models;
+	private final ComboBoxModel[][] models;
 	
-	public SentenceTranslationOptionsPanel(String[] args, int spanLimit, TranslationOptions... translationsList) {
-		this(args,spanLimit,Arrays.asList(translationsList));
+	public SentencePanel(String[] words, int spanLimit, TranslationOptions... translationsList) {
+		this(words,spanLimit,Arrays.asList(translationsList));
 	}
 	
-	public SentenceTranslationOptionsPanel(String[] args, int spanLimit, List<TranslationOptions> translationsList) {
+	public SentencePanel(String[] words, int spanLimit, List<TranslationOptions> translationsList) {
 		this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-		this.numRows=Math.min(args.length, spanLimit);
+//		this.words = words;
+		this.numRows=Math.min(words.length, spanLimit);
 		this.displayWidth = getMaxDisplayWidth();
 		
 		// Initialize chart model
 		{
-			this.models = new TranslationOptionsComboBoxModel[numRows][];
+			this.models = new ComboBoxModel[numRows][];
 
 			// Add rows to chart model
 			for (int row=0; row<numRows; row+=1) {
 				
-				int numCells=args.length-row;
-				this.models[row] = new TranslationOptionsComboBoxModel[numCells];
+				int numCells=words.length-row;
+				this.models[row] = new ComboBoxModel[numCells];
 				
 				// Add cells to chart model
 				for (int cell=0; cell<numCells; cell+=1) {
@@ -54,9 +56,9 @@ public class SentenceTranslationOptionsPanel extends JPanel {
 						if (wordIndex>cell) {
 							sourcePhraseBuilder.append(' ');
 						}
-						sourcePhraseBuilder.append(args[wordIndex]);
+						sourcePhraseBuilder.append(words[wordIndex]);
 					}
-					TranslationOptionsComboBoxModel model = new TranslationOptionsComboBoxModel(sourcePhraseBuilder.toString(), translationsList);
+					ComboBoxModel model = new ComboBoxModel(sourcePhraseBuilder.toString(), translationsList);
 					this.models[row][cell] = model;
 					
 				}
@@ -66,14 +68,14 @@ public class SentenceTranslationOptionsPanel extends JPanel {
 		}
 		
 		
-		ChildScrollPane panel = new ChildScrollPane(args,spanLimit,translationsList);
+		ChildScrollPane panel = new ChildScrollPane(words,spanLimit,translationsList);
 		int totalWidth = (int) panel.getPreferredSize().getWidth();
 		int extra=displayWidth*2/3;
 		List<ChildScrollPane> panels = new ArrayList<ChildScrollPane>();
 		panels.add(panel);
 		this.add(panel);
 		for (int x=displayWidth; x+extra<totalWidth; x+=displayWidth) {
-			panel = new ChildScrollPane(args,spanLimit,translationsList);
+			panel = new ChildScrollPane(words,spanLimit,translationsList);
 			panels.add(panel);
 			this.add(panel);
 		}
@@ -110,7 +112,7 @@ public class SentenceTranslationOptionsPanel extends JPanel {
 		String[] sentence = line2.split(" ");
 		
 		JFrame window = new JFrame();
-		SentenceTranslationOptionsPanel parent = new SentenceTranslationOptionsPanel(sentence,spanLimit,translations);
+		SentencePanel parent = new SentencePanel(sentence,spanLimit,translations);
 		window.setContentPane(parent);
 		window.pack();
 		window.setVisible(true);

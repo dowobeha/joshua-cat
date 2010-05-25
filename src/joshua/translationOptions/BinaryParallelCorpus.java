@@ -1,4 +1,4 @@
-package good;
+package joshua.translationOptions;
 
 import java.io.IOException;
 import java.util.ArrayList;
