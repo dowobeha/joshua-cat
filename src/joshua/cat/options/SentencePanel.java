@@ -1,18 +1,20 @@
 package joshua.cat.options;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Point;
-import java.io.IOException;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -21,12 +23,18 @@ import javax.swing.ScrollPaneConstants;
 @SuppressWarnings("serial")
 public class SentencePanel extends JPanel {
 
+	private static final Logger logger =
+		Logger.getLogger(SentencePanel.class.getName());
+	
 	private final int displayWidth;
 	
 	private final SentencePanelModel model;
 	
+	final ComboBoxMouseListener mouseListener;
 
 	public SentencePanel(SentencePanelModel model) {
+		this.mouseListener = new ComboBoxMouseListener();
+		
 		this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
 		this.displayWidth = getMaxDisplayWidth();
 		
@@ -53,41 +61,18 @@ public class SentencePanel extends JPanel {
 		for (int x=displayWidth; x+extra<totalWidth; x+=displayWidth) {
 			panels.get(x/displayWidth).getViewport().setViewPosition(new Point(x,0));
 		}
+		
+
 	}
 	
 	protected int getMaxDisplayWidth() {
 		return (int) GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().getBounds().getWidth();
 	}
 	
-	public static void main(String[] args) throws IOException, ClassNotFoundException {
-		
-		String joshDir = "/Users/lane/Research/brainstorm/Joshua Scratch/data/europarl.es-en.10000.josh";
-		SourceText sourceText = new SourceText("/Users/lane/Research/brainstorm/Joshua Scratch/data/europarl.es.10");
-		
-		BinaryParallelCorpus corpus = new BinaryParallelCorpus(joshDir, sourceText);
-		
-		TranslationOptions translations = new TranslationOptions(corpus);
-		
-		int spanLimit = 5;
-		
-
-		Iterator<String> iterator = sourceText.iterator();
-		iterator.next();
-		String line2 = iterator.next();
-		
-		JFrame window = new JFrame();
-		SentencePanelModel model = new SentencePanelModel(line2,spanLimit,translations);
-		SentencePanel parent = new SentencePanel(model);
-		window.setContentPane(parent);
-		window.pack();
-		window.setVisible(true);
-		
-		
-	}
 	
 	private class ChildScrollPane extends JScrollPane {
 		
-		ChildScrollPane(String[] args) {
+		private ChildScrollPane(String[] args) {
 			super(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 			setViewportView(new ChildPanel(args));
 		}
@@ -98,8 +83,9 @@ public class SentencePanel extends JPanel {
 
 		final JComboBox[][] comboBoxes;
 		
-		public ChildPanel(String[] args) {
+		private ChildPanel(String[] args) {
 			super(new GridBagLayout());
+			addMouseListener(mouseListener);
 			
 			for (int i=0; i<args.length*2; i++) {
 				GridBagConstraints c = new GridBagConstraints();
@@ -151,10 +137,9 @@ public class SentencePanel extends JPanel {
 						c.weightx = 1;
 						c.fill = GridBagConstraints.HORIZONTAL;
 
-						JComboBox comboBox = new JComboBox(model.getComboBoxModel(row,cell));
-						comboBox.setEditable(true);
-						comboBoxes[row][cell] = comboBox;
-						this.add(comboBox,c);
+						
+						comboBoxes[row][cell] = new ComboBox(row,cell);
+						this.add(comboBoxes[row][cell],c);
 						
 						this.doLayout();
 					}
@@ -166,4 +151,71 @@ public class SentencePanel extends JPanel {
 		}
 
 	}
+	
+	private class ComboBox extends JComboBox {
+		
+		private final int row;
+		private final int cell;
+		
+		private ComboBox(int row, int cell) {
+			super(model.getComboBoxModel(row, cell));
+			setEditable(false);
+			setEnabled(false);
+			this.row = row;
+			this.cell = cell;
+			
+			for (Component component : getComponents()) {
+				component.addMouseListener(mouseListener);
+			}
+		}
+	}
+	
+	
+	private class ComboBoxMouseListener implements MouseListener {
+
+		private boolean comboBoxEvent(MouseEvent e) {
+			return e.getComponent().getParent() instanceof JComboBox;
+		}
+		
+		public void mousePressed(MouseEvent e) {
+			log("mousePressed",e);
+			if (comboBoxEvent(e)) {
+				e.getComponent().getParent().setEnabled(true);
+				e.getComponent().getParent();
+			}
+		}
+
+		public void mouseReleased(MouseEvent e) {
+			log("mouseReleased",e);
+		}
+
+		public void mouseEntered(MouseEvent e) {
+			log("mouseEntered",e);
+			if (comboBoxEvent(e)) {
+				e.getComponent().getParent().setEnabled(true);
+			}
+		}
+
+		public void mouseExited(MouseEvent e) {
+			log("mouseExited",e);
+			if (comboBoxEvent(e)) {
+				e.getComponent().getParent().setEnabled(false);
+			}
+		}
+
+		public void mouseClicked(MouseEvent e) {
+			log("mouseClicked",e);
+		}
+
+		void log(String eventDescription, MouseEvent e) {
+			if (logger.isLoggable(Level.FINE)) {
+				logger.fine(eventDescription + " detected on "
+					+ e.getComponent().getClass().getName()
+					+ ".");
+			}
+		}
+
+	}
 }
+
+

@@ -176,7 +176,8 @@ public class Scratch {
 //					//				String[] petStrings = { "Bird", "Cat", "Dog", "Rabbit", "Pig" };
 //					JComboBox comboBox = new JComboBox(new DefaultComboBoxModel(strings));
 					JComboBox comboBox = new JComboBox(model);
-					comboBox.setEditable(true);
+					comboBox.setEditable(false);
+					comboBox.setEnabled(false);
 					comboBox.addActionListener(l);
 					comboBoxes[row][cell] = comboBox;
 					for (Component component : comboBox.getComponents()) {
