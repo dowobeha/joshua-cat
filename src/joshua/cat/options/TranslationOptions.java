@@ -1,3 +1,4 @@
+/* This file is copyright 2010 by Lane O.B. Schwartz */
 package joshua.cat.options;
 
 

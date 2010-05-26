@@ -1,3 +1,4 @@
+/* This file is copyright 2010 by Lane O.B. Schwartz */
 package joshua.cat.options;
 
 import java.awt.event.ActionEvent;
@@ -16,7 +17,7 @@ import javax.swing.text.BadLocationException;
 
 // Thanks to Sun for providing the excellent TextAreaDemo
 //	(http://java.sun.com/docs/books/tutorial/uiswing/examples/components/TextAreaDemoProject/src/components/TextAreaDemo.java)
-//	which demonstrates how to do text completion in a JTextArea.
+//	which demonstrates the use of text completion in a JTextArea.
 //
 // This class is partially based on the techniques shown in that demo.
 @SuppressWarnings("serial")

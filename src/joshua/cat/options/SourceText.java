@@ -1,4 +1,6 @@
+/* This file is copyright 2010 by Lane O.B. Schwartz */
 package joshua.cat.options;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
