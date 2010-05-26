@@ -44,6 +44,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.GroupLayout.*;
 
 
+@SuppressWarnings("serial")
 public class TextAreaDemo extends JFrame
         implements DocumentListener {
     
