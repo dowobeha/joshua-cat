@@ -8,6 +8,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.TreeSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public interface TextCompletionModel {
 
@@ -17,7 +19,8 @@ public interface TextCompletionModel {
 
 class TranslationOptionsCompletionModel extends ListCompletionModel {
 
-	
+	private static final Logger logger =
+		Logger.getLogger(TranslationOptionsCompletionModel.class.getName());
 	
 	public TranslationOptionsCompletionModel(Locale locale, TranslationOptions... translationsList) {
 		this(locale, Arrays.asList(translationsList));
@@ -49,8 +52,10 @@ class TranslationOptionsCompletionModel extends ListCompletionModel {
 		
 		List<String> result = new ArrayList<String>(words);
 		
-		for (String phrase : result) {
-			System.out.println(phrase);
+		if (logger.isLoggable(Level.FINEST)) {
+			for (String phrase : result) {
+				logger.finest(phrase);
+			}
 		}
 		
 		return result;
@@ -65,12 +70,11 @@ class DummyCompletionModel extends ListCompletionModel {
 	
 	private static List<String> getDummyList() {
 		ArrayList<String> words = new ArrayList<String>(5);
-		words.add("spark");
-		words.add("special");
-		words.add("spectacles");
-		words.add("spectacular");
-		words.add("swing");
-		
+		words.add("aleph");
+		words.add("alpha");
+		words.add("beta");
+		words.add("beaker");
+		words.add("cat");
 		return words;
 	}
 }
