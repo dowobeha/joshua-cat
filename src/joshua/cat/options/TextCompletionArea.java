@@ -1,12 +1,13 @@
 /* This file is copyright 2010 by Lane O.B. Schwartz */
 package joshua.cat.options;
 
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
-import javax.swing.JFrame;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
@@ -23,10 +24,12 @@ import javax.swing.text.BadLocationException;
 @SuppressWarnings("serial")
 public class TextCompletionArea extends JTextArea implements DocumentListener {
 
-	private static enum Actions { COMPLETE };
+	private static enum Actions { COMPLETE, COMPLETE_WITH_SPACE, NEW_LINE };
 
 	private static enum InputMode { TYPING, COMPLETING }
 
+	private boolean completionInProgress = false;
+	
 	private InputMode mode;
 
 
@@ -42,20 +45,43 @@ public class TextCompletionArea extends JTextArea implements DocumentListener {
 		this.mode = InputMode.TYPING;
 
 		InputMap inputMap = getInputMap();
+		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), Actions.NEW_LINE);
 		inputMap.put(KeyStroke.getKeyStroke("ENTER"), Actions.COMPLETE);
-		inputMap.put(KeyStroke.getKeyStroke("TAB"), Actions.COMPLETE);
+		inputMap.put(KeyStroke.getKeyStroke("TAB"), Actions.COMPLETE_WITH_SPACE);
 
 		ActionMap actionMap = getActionMap();
+		actionMap.put(Actions.NEW_LINE, new AbstractAction() {
+			public void actionPerformed(ActionEvent ev) {
+				int caretPosition = getCaretPosition();
+				int lineNumber = getDocument().getDefaultRootElement().getElementIndex(caretPosition);
+				try {
+					int endOfLine = getLineEndOffset(lineNumber);
+					TextCompletionArea.this.insert("\n", endOfLine);
+				} catch (BadLocationException e) {
+				}
+				mode = InputMode.TYPING;
+			}
+		});
 		actionMap.put(Actions.COMPLETE, new AbstractAction() {
 			public void actionPerformed(ActionEvent ev) {
 				if (mode == InputMode.COMPLETING) {
 					int textPosition = getSelectionEnd();
-					insert(" ", textPosition);
-					setCaretPosition(textPosition + 1);
+					setCaretPosition(textPosition);
 					mode = InputMode.TYPING;
 				} 
 			}
 		});
+		actionMap.put(Actions.COMPLETE_WITH_SPACE, new AbstractAction() {
+			public void actionPerformed(ActionEvent ev) {
+				if (mode == InputMode.COMPLETING) {
+					int textPosition = getSelectionEnd();					
+					insert(" ", textPosition);
+					setCaretPosition(textPosition+1);
+					mode = InputMode.TYPING;
+				} 
+			}
+		});
+		
 	}
 
 	@Override
@@ -65,39 +91,41 @@ public class TextCompletionArea extends JTextArea implements DocumentListener {
 	@Override
 	public void insertUpdate(DocumentEvent e) {
 
-		try {
-			
-			int endOfEdit =  e.getOffset() + e.getLength();
-			
-			String documentText = getText(0, endOfEdit);
+		if (! completionInProgress) {
+			try {
 
-			int lastSpaceIndex = documentText.lastIndexOf(' ');
+				int endOfEdit =  e.getOffset() + e.getLength();
 
-			String prefix = documentText.substring(lastSpaceIndex+1);
-			String completion = completionModel.complete(prefix);
-			
-			if (completion != null) {
-				// Implementations of DocumentListener
-				//    may not directly update their associated Document.
+				String documentText = getText(0, endOfEdit);
+
+				int lastSpaceIndex = documentText.lastIndexOf(' ');
+
+				String prefix = documentText.substring(lastSpaceIndex+1);
+				String completion = completionModel.complete(prefix);
+
+				if (completion != null) {
+					// Implementations of DocumentListener
+					//    may not directly update their associated Document.
+					//
+					// So, ask the Swing event thread 
+					//    to perform the actual Document update,
+					//    as defined in the CompletionTask
+					SwingUtilities.invokeLater(
+							new CompletionTask(completion, endOfEdit));
+				} else {
+					// Since there is no valid completion to the current prefix,
+					//    cancel the completion action by resuming typing mode
+					mode = InputMode.TYPING;
+				}
+
+
+			} catch (BadLocationException exception) {
+				// The editing location was somehow invalid
 				//
-				// So, ask the Swing event thread 
-				//    to perform the actual Document update,
-				//    as defined in the CompletionTask
-				SwingUtilities.invokeLater(
-						new CompletionTask(completion, endOfEdit));
-			} else {
-				// Since there is no valid completion to the current prefix,
-				//    cancel the completion action by resuming typing mode
+				// Ensure that typing mode is resumed
 				mode = InputMode.TYPING;
-			}
-
-
-		} catch (BadLocationException exception) {
-			// The editing location was somehow invalid
-			//
-			// Ensure that typing mode is resumed
-			mode = InputMode.TYPING;
-		} 
+			} 
+		}
 		
 	}
 
@@ -111,6 +139,7 @@ public class TextCompletionArea extends JTextArea implements DocumentListener {
 		}
 
 		public void run() {
+			completionInProgress = true;
 			insert(completion, position);
 
 			// Select the text
@@ -118,20 +147,11 @@ public class TextCompletionArea extends JTextArea implements DocumentListener {
 			moveCaretPosition(position);
 
 			mode = InputMode.COMPLETING;
+			completionInProgress = false;
 		}
 	}
 
 	@Override
 	public void removeUpdate(DocumentEvent e) {}
-
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		JFrame window = new JFrame();
-		window.getContentPane().add(new TextCompletionArea(new DummyCompletionModel()));
-		window.setVisible(true);
-	}
 
 }

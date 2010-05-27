@@ -4,6 +4,7 @@ package joshua.cat.options;
 
 import good.maybe.TranslationOptionsListener;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -28,6 +29,9 @@ public class TranslationOptions {
 		}
 	}
 	
+	public Collection<String> getAllTargets() {
+		return sourceToTarget.values();
+	}
 	
 	public List<String> get(String sourcePhrase) {
 		return sourceToTarget.get(sourcePhrase);

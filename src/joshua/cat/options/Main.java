@@ -31,6 +31,10 @@ public class Main {
 		window.pack();
 		window.setVisible(true);
 //		window.addMouseListener(parent.mouseListener);
+		
+		JFrame window2 = new JFrame();
+		window2.getContentPane().add(new TextCompletionArea(new TranslationOptionsCompletionModel(translations)));
+		window2.setVisible(true);
 	}
 	
 }

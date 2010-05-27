@@ -1,9 +1,13 @@
 /* This file is copyright 2010 by Lane O.B. Schwartz */
 package joshua.cat.options;
 
+import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+import java.util.TreeSet;
 
 public interface TextCompletionModel {
 
@@ -11,27 +15,88 @@ public interface TextCompletionModel {
 	
 }
 
-class DummyCompletionModel implements TextCompletionModel {
+class TranslationOptionsCompletionModel extends ListCompletionModel {
+
 	
-	private final List<String> words;
 	
-	public DummyCompletionModel() {
+	public TranslationOptionsCompletionModel(Locale locale, TranslationOptions... translationsList) {
+		this(locale, Arrays.asList(translationsList));
+	}
+	
+	public TranslationOptionsCompletionModel(Locale locale, List<TranslationOptions> translationsList) {
+		super(locale, getList(translationsList));
+	}
+	
+	public TranslationOptionsCompletionModel(TranslationOptions... translationsList) {
+		this(Arrays.asList(translationsList));
+	}
+	
+	public TranslationOptionsCompletionModel(List<TranslationOptions> translationsList) {
+		this(Locale.getDefault(),translationsList);
+	}
+	
+	private static List<String> getList(List<TranslationOptions> translationsList) {
 		
-		words = new ArrayList<String>(5);
+		TreeSet<String> words = new TreeSet<String>();
+		
+		for (TranslationOptions translations : translationsList) {
+			for (String phrase : translations.getAllTargets()) {
+				for (String word : phrase.split("\\s+")) {
+					words.add(word);
+				}
+			}
+		}
+		
+		List<String> result = new ArrayList<String>(words);
+		
+		for (String phrase : result) {
+			System.out.println(phrase);
+		}
+		
+		return result;
+	}
+}
+
+
+class DummyCompletionModel extends ListCompletionModel {
+	public DummyCompletionModel() {
+		super(Locale.getDefault(), getDummyList());
+	}
+	
+	private static List<String> getDummyList() {
+		ArrayList<String> words = new ArrayList<String>(5);
 		words.add("spark");
 		words.add("special");
 		words.add("spectacles");
 		words.add("spectacular");
 		words.add("swing");
+		
+		return words;
+	}
+}
+
+class ListCompletionModel implements TextCompletionModel {
+	private final List<String> words;
+	protected final Collator localeAwareComparator;
+	
+	public ListCompletionModel(Locale locale, List<String> words) {
+		this.words = words;
+		this.localeAwareComparator = Collator.getInstance(locale);
 	}
 	
 	public String complete(String prefix) {
-		int n = Collections.binarySearch(words, prefix);
+		int n = Collections.binarySearch(words, prefix,localeAwareComparator);
 
 		if (n < 0 && -n <= words.size()) {
+			int prefixLength = prefix.length();
 			String match = words.get(-n - 1);
-			if (match.startsWith(prefix)) {
-				return match.substring(prefix.length());
+			if (match.length() > prefixLength) {
+				String startOfMatch = match.substring(0, prefixLength);
+				if (startOfMatch.equalsIgnoreCase(prefix)) {
+					return match.substring(prefixLength);
+				} else {
+					return null;
+				}
 			} else {
 				return null;
 			}
