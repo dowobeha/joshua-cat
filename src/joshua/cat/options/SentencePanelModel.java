@@ -8,29 +8,29 @@ import com.google.common.base.Preconditions;
 
 public class SentencePanelModel {
 
-	private final String sentence;
-	private final String[] words;
+	private final String sourceSentence;
+	private final String[] sourceWords;
 //	private final List<TranslationOptions> translationsList;
 //	private final int spanLimit;
 	
 	private final ComboBoxModel[][] models;
 	private final int numRows;
 	
-	public SentencePanelModel(String sentence, int spanLimit, TranslationOptions... translationsList) {
-		this(sentence,spanLimit,Arrays.asList(translationsList));
+	public SentencePanelModel(String sourceSentence, int spanLimit, TranslationOptions... translationsList) {
+		this(sourceSentence,spanLimit,Arrays.asList(translationsList));
 	}
 	
-	public SentencePanelModel(String sentence, int spanLimit, List<TranslationOptions> translationsList) {
-		Preconditions.checkNotNull(sentence);
+	public SentencePanelModel(String sourceSentence, int spanLimit, List<TranslationOptions> translationsList) {
+		Preconditions.checkNotNull(sourceSentence);
 		Preconditions.checkState(spanLimit > 0);
 		Preconditions.checkNotNull(translationsList);
 		
-		this.sentence = sentence;
-		this.words = sentence.split("\\s+");
+		this.sourceSentence = sourceSentence;
+		this.sourceWords = sourceSentence.split("\\s+");
 //		this.spanLimit = spanLimit;
 //		this.translationsList = translationsList;
 		
-		this.numRows=Math.min(words.length, spanLimit);
+		this.numRows=Math.min(sourceWords.length, spanLimit);
 		
 		// Initialize chart model
 		{
@@ -39,7 +39,7 @@ public class SentencePanelModel {
 			// Add rows to chart model
 			for (int row=0; row<numRows; row+=1) {
 				
-				int numCells=words.length-row;
+				int numCells=sourceWords.length-row;
 				this.models[row] = new ComboBoxModel[numCells];
 				
 				// Add cells to chart model
@@ -50,7 +50,7 @@ public class SentencePanelModel {
 						if (wordIndex>cell) {
 							sourcePhraseBuilder.append(' ');
 						}
-						sourcePhraseBuilder.append(words[wordIndex]);
+						sourcePhraseBuilder.append(sourceWords[wordIndex]);
 					}
 					ComboBoxModel model = new ComboBoxModel(sourcePhraseBuilder.toString(), translationsList);
 					this.models[row][cell] = model;
@@ -63,13 +63,13 @@ public class SentencePanelModel {
 	}
 	
 	public String[] getWords() {
-		return words;
+		return sourceWords;
 	}
 	
 	public String getWord(int index) {
-		Preconditions.checkArgument(index < words.length);
+		Preconditions.checkArgument(index < sourceWords.length);
 		
-		return words[index];
+		return sourceWords[index];
 	}
 	
 	public ComboBoxModel getComboBoxModel(int row, int cell) {
@@ -81,7 +81,7 @@ public class SentencePanelModel {
 	}
 	
 	public String getSentence() {
-		return this.sentence;
+		return this.sourceSentence;
 	}
 	
 }

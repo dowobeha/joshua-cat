@@ -1,14 +1,19 @@
 /* This file is copyright 2010 by Lane O.B. Schwartz */
 package joshua.cat.options;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.util.Iterator;
 
 import javax.swing.JFrame;
 
+import joshua.ui.StartupWindow;
+
 public class Main {
 
 	public static void main(String[] args) throws IOException, ClassNotFoundException {
+		
+		StartupWindow splashScreen = new StartupWindow("Translate","Lane Schwartz","2010",Color.BLACK,5);
 		
 		String joshDir = "/Users/lane/Research/brainstorm/Joshua Scratch/data/europarl.es-en.10000.josh";
 		SourceText sourceText = new SourceText("/Users/lane/Research/brainstorm/Joshua Scratch/data/europarl.es.10");
@@ -29,11 +34,15 @@ public class Main {
 		SentencePanel parent = new SentencePanel(model);
 		window.setContentPane(parent);
 		window.pack();
-		window.setVisible(true);
+		
 //		window.addMouseListener(parent.mouseListener);
 		
 		JFrame window2 = new JFrame();
-		window2.getContentPane().add(new TextCompletionArea(new TranslationOptionsCompletionModel(translations)));
+		window2.getContentPane().add(new BitextPanel(sourceText, new TranslationOptionsCompletionModel(translations)));
+		window2.pack();
+		
+		splashScreen.setVisible(false);
+		window.setVisible(true);
 		window2.setVisible(true);
 	}
 	
