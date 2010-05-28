@@ -22,12 +22,19 @@ class TranslationOptionsCompletionModel extends ListCompletionModel {
 	private static final Logger logger =
 		Logger.getLogger(TranslationOptionsCompletionModel.class.getName());
 	
+	private final List<TranslationOptions> translationsList;
+	
+	public List<TranslationOptions> getTranslationOptions() {
+		return this.translationsList;
+	}
+	
 	public TranslationOptionsCompletionModel(Locale locale, TranslationOptions... translationsList) {
 		this(locale, Arrays.asList(translationsList));
 	}
 	
 	public TranslationOptionsCompletionModel(Locale locale, List<TranslationOptions> translationsList) {
 		super(locale, getList(translationsList));
+		this.translationsList = translationsList;
 	}
 	
 	public TranslationOptionsCompletionModel(TranslationOptions... translationsList) {

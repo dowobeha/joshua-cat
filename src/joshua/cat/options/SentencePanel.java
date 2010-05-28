@@ -4,7 +4,6 @@ package joshua.cat.options;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Point;
@@ -22,6 +21,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
+
+import joshua.util.Displays;
 
 @SuppressWarnings("serial")
 public class SentencePanel extends JPanel {
@@ -41,15 +42,15 @@ public class SentencePanel extends JPanel {
 		this.mouseListener = new ComboBoxMouseListener();
 		
 		this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
-		this.displayWidth = getMaxDisplayWidth();
+		this.displayWidth = Displays.getMaxDisplayWidth();
 		
 		this.model = model;
-		
-		JTextArea sourceTextArea = new JTextArea(model.getSentence());
-		sourceTextArea.setLineWrap(true);
-		sourceTextArea.setWrapStyleWord(true);
-		sourceTextArea.setEditable(false);
-		this.add(new JScrollPane(sourceTextArea));
+//		
+//		JTextArea sourceTextArea = new JTextArea(model.getSentence());
+//		sourceTextArea.setLineWrap(true);
+//		sourceTextArea.setWrapStyleWord(true);
+//		sourceTextArea.setEditable(false);
+//		this.add(new JScrollPane(sourceTextArea));
 		
 		ChildScrollPane panel = new ChildScrollPane(model.getWords());
 		int totalWidth = (int) panel.getPreferredSize().getWidth();
@@ -74,10 +75,7 @@ public class SentencePanel extends JPanel {
 		
 
 	}
-	
-	protected int getMaxDisplayWidth() {
-		return (int) GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().getBounds().getWidth();
-	}
+
 	
 	
 	private class ChildScrollPane extends JScrollPane {

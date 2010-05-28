@@ -1,23 +1,16 @@
 package joshua.cat.options;
 
-import java.awt.Color;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.AbstractCellEditor;
-import javax.swing.DefaultCellEditor;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 
-import joshua.util.Colors;
+import joshua.util.Displays;
 
 @SuppressWarnings("serial")
 public class BitextPanel extends JPanel {
@@ -89,6 +82,24 @@ public class BitextPanel extends JPanel {
 			
 		}
 		
+		this.doLayout();
+		
+		int displayWidth = Displays.getMaxDisplayWidth();
+		Dimension size = new Dimension((int) displayWidth, (int) this.getPreferredSize().getHeight());
+		this.setMinimumSize(size);
+		this.setPreferredSize(size);
+		this.setSize(size);
+		
+		this.doLayout();
+		
+		double height = 0;
+		for (JTextArea sourceSentenceArea : sourceTextArea) {
+			height += sourceSentenceArea.getPreferredSize().getHeight();
+		}
+		size = new Dimension((int) displayWidth, (int) height);
+		this.setMinimumSize(size);
+		this.setPreferredSize(size);
+		this.setSize(size);
 	}
 
 }

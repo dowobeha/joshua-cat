@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.Iterator;
 
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
 
 import joshua.ui.StartupWindow;
 
@@ -23,27 +24,35 @@ public class Main {
 		TranslationOptions translations = new TranslationOptions(corpus);
 		
 		int spanLimit = 5;
+//		
+//
+//		Iterator<String> iterator = sourceText.iterator();
+//		iterator.next();
+//		String line2 = iterator.next();
 		
-
-		Iterator<String> iterator = sourceText.iterator();
-		iterator.next();
-		String line2 = iterator.next();
+//		JFrame window = new JFrame();
+//		SentencePanelModel model = new SentencePanelModel(line2,spanLimit,translations);
+//		SentencePanel parent = new SentencePanel(model);
+//		window.setContentPane(parent);
+//		window.pack();
+//		
+////		window.addMouseListener(parent.mouseListener);
+//		
+//		JFrame window2 = new JFrame();
+//		window2.getContentPane().add(new BitextPanel(sourceText, new TranslationOptionsCompletionModel(translations)));
+//		window2.pack();
+//		
+//		
+//		window.setVisible(true);
+//		window2.setVisible(true);
 		
-		JFrame window = new JFrame();
-		SentencePanelModel model = new SentencePanelModel(line2,spanLimit,translations);
-		SentencePanel parent = new SentencePanel(model);
-		window.setContentPane(parent);
-		window.pack();
+		JFrame window3 = new JFrame();
+		window3.getContentPane().add(new PrimaryPanel(sourceText, new TranslationOptionsCompletionModel(translations),spanLimit));
+		window3.pack();
+		window3.setVisible(true);
 		
-//		window.addMouseListener(parent.mouseListener);
-		
-		JFrame window2 = new JFrame();
-		window2.getContentPane().add(new BitextPanel(sourceText, new TranslationOptionsCompletionModel(translations)));
-		window2.pack();
 		
 		splashScreen.setVisible(false);
-		window.setVisible(true);
-		window2.setVisible(true);
 	}
 	
 }
