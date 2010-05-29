@@ -1,12 +1,13 @@
 /* This file is copyright 2010 by Lane O.B. Schwartz */
-package joshua.cat.options;
+package joshua.cat;
 
 import java.awt.Color;
 import java.io.IOException;
 
 import javax.swing.JFrame;
 
-import joshua.cat.options.ui.PrimaryPanel;
+import joshua.cat.model.TranslationOptionsCompletionModel;
+import joshua.cat.view.PrimaryPanel;
 import joshua.ui.StartupWindow;
 
 public class Main {

@@ -1,10 +1,12 @@
 /* This file is copyright 2010 by Lane O.B. Schwartz */
-package joshua.cat.options;
+package joshua.cat.model;
 
 import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
+
+import joshua.cat.TranslationOptions;
 
 
 @SuppressWarnings("serial")

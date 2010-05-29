@@ -1,8 +1,10 @@
 /* This file is copyright 2010 by Lane O.B. Schwartz */
-package joshua.cat.options;
+package joshua.cat.model;
 
 import java.util.Arrays;
 import java.util.List;
+
+import joshua.cat.TranslationOptions;
 
 import com.google.common.base.Preconditions;
 

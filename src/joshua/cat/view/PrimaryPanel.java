@@ -1,4 +1,4 @@
-package joshua.cat.options.ui;
+package joshua.cat.view;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -20,12 +20,10 @@ import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 
 
-import joshua.cat.options.ChildScrollPane;
-import joshua.cat.options.SentencePanelModel;
-import joshua.cat.options.SourceText;
-import joshua.cat.options.TextCompletionArea;
-import joshua.cat.options.TranslationOptions;
-import joshua.cat.options.TranslationOptionsCompletionModel;
+import joshua.cat.SourceText;
+import joshua.cat.TranslationOptions;
+import joshua.cat.model.SentencePanelModel;
+import joshua.cat.model.TranslationOptionsCompletionModel;
 import joshua.ui.ScrollablePanel;
 import joshua.util.Displays;
 

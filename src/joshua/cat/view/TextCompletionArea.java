@@ -1,5 +1,5 @@
 /* This file is copyright 2010 by Lane O.B. Schwartz */
-package joshua.cat.options;
+package joshua.cat.view;
 
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -14,6 +14,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
+
+import joshua.cat.model.TextCompletionModel;
 
 
 // Thanks to Sun for providing the excellent TextAreaDemo

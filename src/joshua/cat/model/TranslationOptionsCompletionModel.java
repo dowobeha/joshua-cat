@@ -1,4 +1,4 @@
-package joshua.cat.options;
+package joshua.cat.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -7,6 +7,8 @@ import java.util.Locale;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import joshua.cat.TranslationOptions;
 
 public class TranslationOptionsCompletionModel extends ListCompletionModel {
 

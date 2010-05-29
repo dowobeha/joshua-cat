@@ -1,4 +1,4 @@
-package joshua.cat.options;
+package joshua.cat.view;
 
 import java.awt.Component;
 import java.awt.GridBagConstraints;
@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 
+import joshua.cat.model.SentencePanelModel;
 import joshua.util.Colors;
 
 

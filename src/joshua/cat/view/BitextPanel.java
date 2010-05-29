@@ -1,4 +1,4 @@
-package joshua.cat.options;
+package joshua.cat.view;
 
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -10,6 +10,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import joshua.cat.SourceText;
+import joshua.cat.model.TextCompletionModel;
 import joshua.util.Displays;
 
 @SuppressWarnings("serial")

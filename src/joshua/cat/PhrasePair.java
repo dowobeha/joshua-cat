@@ -1,5 +1,5 @@
 /* This file is copyright 2010 by Lane O.B. Schwartz */
-package joshua.cat.options;
+package joshua.cat;
 
 public class PhrasePair {
 
