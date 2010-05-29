@@ -1,4 +1,4 @@
-package joshua.cat.options;
+package joshua.cat.options.ui;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -10,6 +10,7 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -18,27 +19,41 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 
+
+import joshua.cat.options.ChildScrollPane;
+import joshua.cat.options.SentencePanelModel;
+import joshua.cat.options.SourceText;
+import joshua.cat.options.TextCompletionArea;
+import joshua.cat.options.TranslationOptions;
+import joshua.cat.options.TranslationOptionsCompletionModel;
+import joshua.ui.ScrollablePanel;
 import joshua.util.Displays;
 
 @SuppressWarnings("serial")
 public class PrimaryPanel extends JScrollPane {
 	
+	@SuppressWarnings("unused")
+	private static final Logger logger = 
+		Logger.getLogger(PrimaryPanel.class.getName());
+	
 	private final List<JTextArea> sourceTextArea;
 	private final List<TextCompletionArea> targetTextArea;
-	private final List<SentencePanel> sentencePanels;
+	private final List<ChildScrollPane> childScrollPanes;
+//	private final List<SentencePanel> sentencePanels;
 //	private final int spanLimit;
 	
 	private final List<TranslationOptions> translationsList;
 	
 	public PrimaryPanel(SourceText sourceText, TranslationOptionsCompletionModel completionModel, int spanLimit) {
-		super(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-		final JPanel contentPane = new JPanel();
+		super(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		final JPanel contentPane = new ScrollablePanel(this,true,false,4);
 		contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.PAGE_AXIS));
 		this.setViewportView(contentPane);
 		
 		this.sourceTextArea = new ArrayList<JTextArea>();
 		this.targetTextArea = new ArrayList<TextCompletionArea>();
-		this.sentencePanels = new ArrayList<SentencePanel>();
+		this.childScrollPanes = new ArrayList<ChildScrollPane>();
+//		this.sentencePanels = new ArrayList<SentencePanel>();
 		
 //		this.spanLimit = spanLimit;
 		this.translationsList = completionModel.getTranslationOptions();
@@ -47,7 +62,9 @@ public class PrimaryPanel extends JScrollPane {
 		for (String sourceSentence : sourceText) {
 			sourceTextArea.add(new JTextArea(sourceSentence));
 			targetTextArea.add(new TextCompletionArea(completionModel));
-			sentencePanels.add(new SentencePanel(new SentencePanelModel(sourceSentence,spanLimit,translationsList)));
+			SentencePanelModel sentencePanelModel = new SentencePanelModel(sourceSentence,spanLimit,translationsList);
+			childScrollPanes.add(new ChildScrollPane(sentencePanelModel));
+//			sentencePanels.add(new SentencePanel(sentencePanelModel));
 		}
 		
 		// Configure and lay out text areas
@@ -67,10 +84,21 @@ public class PrimaryPanel extends JScrollPane {
 				targetSentenceArea.setLineWrap(true);
 				contentPane.add(targetSentenceArea);
 				
-//				final SentencePanel sentencePanel = sentencePanels.get(i);
 				final JPanel sentencePanel = new JPanel();
+				ChildScrollPane childScrollPane = childScrollPanes.get(i);
+				sentencePanel.add(childScrollPane);
 				sentencePanel.setLayout(new BoxLayout(sentencePanel, BoxLayout.PAGE_AXIS));
 				contentPane.add(sentencePanel);
+				
+//				childScrollPane.doLayout();
+//				Rectangle bounds = childScrollPane.getViewportBorderBounds();
+//				System.out.println(bounds);
+//				Dimension d = new Dimension(bounds.width,bounds.height);
+//				
+//				childScrollPane.getViewport().getView().setPreferredSize(d);
+//				PrimaryPanel.this.validate();
+//				PrimaryPanel.this.repaint();
+//				
 				
 				final int index = i;
 				
@@ -81,78 +109,57 @@ public class PrimaryPanel extends JScrollPane {
 				more.addActionListener(new ActionListener(){
 					@Override
 					public void actionPerformed(ActionEvent e) {
-//						System.out.println("contentPane Before:\t"+contentPane.getHeight());
-//						System.out.println("sentencePanel Before:\t"+sentencePanel.getHeight());
-						sentencePanel.add(sentencePanels.get(index));
+						
+						sentencePanel.add(childScrollPanes.get(index)); 
+						sentencePanel.setPreferredSize(childScrollPanes.get(index).getPreferredSize());
 						{
+							int viewportWidth = (int) PrimaryPanel.this.getViewportBorderBounds().getWidth();
 							int height = 0;
 							for (Component c : contentPane.getComponents()) {
 								height += c.getPreferredSize().getHeight();
 							}
-							contentPane.setPreferredSize(new Dimension((int)contentPane.getPreferredSize().getWidth(),height));
+							contentPane.setPreferredSize(new Dimension(viewportWidth,height));
 						}
-//						sentencePanel.setSize(sentencePanel.getPreferredSize());
-//						sentencePanel.setMinimumSize(sentencePanel.getPreferredSize());
-//						System.out.println("contentPane After:\t"+contentPane.getHeight());
-//						System.out.println("sentencePanel After:\t"+sentencePanel.getHeight());
+						
 						more.setEnabled(false);
 						less.setEnabled(true);
-//						PrimaryPanel.this.setViewportView(null);
-//						contentPane.validate();
-//						contentPane.repaint();
-//						sentencePanel.revalidate();
-//						contentPane.revalidate();
-//						PrimaryPanel.this.revalidate();
-//						sentencePanel.doLayout();
-//						contentPane.doLayout();
-//						PrimaryPanel.this.doLayout();
-//						for (Component c : contentPane.getComponents()) {
-//							c.validate();
-//							c.repaint();
-//						}
-//						contentPane.validate();
-//						contentPane.repaint();
-//						PrimaryPanel.this.setViewportView(contentPane);
+						
 						PrimaryPanel.this.validate();
 						PrimaryPanel.this.repaint();
-//						
-//						System.out.println("contentPane Finally:\t"+contentPane.getHeight());
-//						System.out.println("sentencePanel Finally:\t"+sentencePanel.getHeight());
+						
 					}
 				});
 				
 				less.addActionListener(new ActionListener(){
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						sentencePanel.remove(sentencePanels.get(index));
-						more.setEnabled(true);
-						less.setEnabled(false);
+						sentencePanel.remove(childScrollPanes.get(index));
+						sentencePanel.setPreferredSize(new Dimension(0,0));
 						{
+							int viewportWidth = (int) PrimaryPanel.this.getViewportBorderBounds().getWidth();
 							int height = 0;
 							for (Component c : contentPane.getComponents()) {
 								height += c.getPreferredSize().getHeight();
 							}
-							contentPane.setPreferredSize(new Dimension((int)contentPane.getPreferredSize().getWidth(),height));
+							contentPane.setPreferredSize(new Dimension(viewportWidth,height));
 						}
-//						sentencePanel.revalidate();
-//						contentPane.revalidate();
+						
+						more.setEnabled(true);
+						less.setEnabled(false);
+						
 						PrimaryPanel.this.validate();
 						PrimaryPanel.this.repaint();
 					}		
 				});
 				
-				less.setEnabled(false);
+				more.setEnabled(false);
 				buttonPanel.add(more);
 				buttonPanel.add(less);
 				
-				
-				
 				contentPane.add(buttonPanel);
-				
-
-			
+							
 		}
-		contentPane.doLayout();
+//		contentPane.doLayout();
 		
 		int displayWidth = Displays.getMaxDisplayWidth();
 		Dimension size = new Dimension((int) displayWidth, (int) contentPane.getPreferredSize().getHeight());
@@ -160,11 +167,15 @@ public class PrimaryPanel extends JScrollPane {
 		this.setPreferredSize(size);
 		this.setSize(size);
 		
+		int viewportWidth = (int) this.getViewportBorderBounds().getWidth();
+		for (Component c : contentPane.getComponents()) {
+			int height = (int) c.getPreferredSize().getHeight();
+			c.setPreferredSize(new Dimension(viewportWidth,height));
+		}
 		
+		PrimaryPanel.this.validate();
+		PrimaryPanel.this.repaint();
 		
-//		this.setMinimumSize(size);
-//		this.setPreferredSize(size);
-//		this.setSize(size);
 	}
 	
 	private final MouseListener listener = new MouseAdapter() {
@@ -173,5 +184,5 @@ public class PrimaryPanel extends JScrollPane {
 			System.out.println(e);
 		}
 	};
-	
+
 }

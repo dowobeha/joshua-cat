@@ -34,4 +34,8 @@ public class ComboBoxModel extends DefaultComboBoxModel {
 		}
 	}
 	
+	public Object getElementAt(int index) {
+		return super.getElementAt(index);
+	}
+	
 }
