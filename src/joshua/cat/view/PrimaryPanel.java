@@ -19,12 +19,13 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 
+import net.dowobeha.ui.ScrollablePanel;
+
 
 import joshua.cat.SourceText;
 import joshua.cat.TranslationOptions;
 import joshua.cat.model.SentencePanelModel;
 import joshua.cat.model.TranslationOptionsCompletionModel;
-import joshua.ui.ScrollablePanel;
 import joshua.util.Displays;
 
 @SuppressWarnings("serial")
