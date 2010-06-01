@@ -37,12 +37,12 @@ package components;
  */
 
 import javax.swing.*;
-import javax.swing.event.MouseInputAdapter;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
 /* ScrollDemo2.java requires no other files. */
+@SuppressWarnings("serial")
 public class ScrollDemo2 extends JPanel
                          implements MouseListener {
     private Dimension area; //indicates area taken up by graphics

@@ -1,27 +1,27 @@
 /* This file is copyright 2010 by Lane O.B. Schwartz */
 package joshua.cat.options;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Point;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.swing.BoxLayout;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
+//import java.awt.Color;
+//import java.awt.Component;
+//import java.awt.Dimension;
+//import java.awt.GridBagConstraints;
+//import java.awt.GridBagLayout;
+//import java.awt.Point;
+//import java.awt.event.MouseEvent;
+//import java.awt.event.MouseListener;
+//import java.util.ArrayList;
+//import java.util.List;
+//import java.util.logging.Level;
+//import java.util.logging.Logger;
+//
+//import javax.swing.BoxLayout;
+//import javax.swing.JComboBox;
+//import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.ScrollPaneConstants;
-
-import joshua.util.Displays;
+//import javax.swing.JScrollPane;
+//import javax.swing.ScrollPaneConstants;
+//
+//import joshua.util.Displays;
 
 @SuppressWarnings("serial")
 public class SentencePanel extends JPanel {
