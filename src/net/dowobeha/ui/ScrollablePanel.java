@@ -3,6 +3,8 @@ package net.dowobeha.ui;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Rectangle;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -19,7 +21,7 @@ import com.google.common.base.Preconditions;
 
 
 @SuppressWarnings("serial")
-public class ScrollablePanel extends JPanel implements Scrollable {
+public class ScrollablePanel extends JPanel implements Scrollable, MouseMotionListener {
 
 	private static final Logger logger = 
 		Logger.getLogger(ScrollablePanel.class.getName());
@@ -39,8 +41,17 @@ public class ScrollablePanel extends JPanel implements Scrollable {
 		this.disableVerticalScrolling = disableVerticalScrolling;
 		this.componentsPerBlock = componentsPerBlock;
 
+		setAutoscrolls(true);
+		addMouseMotionListener(this);
 	}
 
+	public void mouseDragged(MouseEvent e) {
+        scrollRectToVisible(new Rectangle(e.getX(), e.getY(), 1, 1));
+    }
+	
+	@Override
+	public void mouseMoved(MouseEvent e) {}
+	
 	@Override
 	public Dimension getPreferredScrollableViewportSize() {
 		return getPreferredSize();
@@ -54,9 +65,7 @@ public class ScrollablePanel extends JPanel implements Scrollable {
 				return getScrollDownIncrement(visibleRect,componentsPerBlock);
 			} else {
 				// Scrolling up
-				int value = getScrollUpIncrement(visibleRect,componentsPerBlock);
-				System.out.println("Scrolling up by " + value);
-				return value;
+				return getScrollUpIncrement(visibleRect,componentsPerBlock);
 			}
 		} else {
 			if (direction > 0) {
@@ -225,9 +234,7 @@ public class ScrollablePanel extends JPanel implements Scrollable {
 				return getScrollDownIncrement(visibleRect,1);
 			} else {
 				// Scrolling up
-				int value = getScrollUpIncrement(visibleRect,1);
-				System.out.println("Scrolling up by " + value);
-				return value;
+				return getScrollUpIncrement(visibleRect,1);
 			}
 		} else {
 			if (direction > 0) {
@@ -322,6 +329,7 @@ public class ScrollablePanel extends JPanel implements Scrollable {
 		return scrollIncrement;
 
 	}
+
 
 
 	

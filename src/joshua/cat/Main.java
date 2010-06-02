@@ -2,8 +2,11 @@
 package joshua.cat;
 
 import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
 import joshua.cat.model.TranslationOptionsCompletionModel;
@@ -14,7 +17,14 @@ public class Main {
 
 	public static void main(String[] args) throws IOException, ClassNotFoundException {
 		
-		StartupWindow splashScreen = new StartupWindow("Translate","Lane Schwartz","2010",Color.BLACK,5);
+		BufferedImage image;
+		try {                
+			image = ImageIO.read(new File("splash.jpg"));
+		} catch (IOException ex) {
+			image = null;
+		}
+	       
+		StartupWindow splashScreen = new StartupWindow("Translate","Lane Schwartz","2010",image,Color.BLACK,5);
 		
 		String joshDir = "/Users/lane/Research/brainstorm/Joshua Scratch/data/europarl.es-en.10000.josh";
 		SourceText sourceText = new SourceText("/Users/lane/Research/brainstorm/Joshua Scratch/data/europarl.es.10");

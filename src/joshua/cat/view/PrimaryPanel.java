@@ -1,15 +1,21 @@
 package joshua.cat.view;
 
+import java.awt.AWTKeyStroke;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.swing.BoxLayout;
@@ -17,6 +23,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
 
 import net.dowobeha.ui.ScrollablePanel;
@@ -38,8 +45,6 @@ public class PrimaryPanel extends JScrollPane {
 	private final List<JTextArea> sourceTextArea;
 	private final List<TextCompletionArea> targetTextArea;
 	private final List<ChildScrollPane> childScrollPanes;
-//	private final List<SentencePanel> sentencePanels;
-//	private final int spanLimit;
 	
 	private final List<TranslationOptions> translationsList;
 	
@@ -52,9 +57,7 @@ public class PrimaryPanel extends JScrollPane {
 		this.sourceTextArea = new ArrayList<JTextArea>();
 		this.targetTextArea = new ArrayList<TextCompletionArea>();
 		this.childScrollPanes = new ArrayList<ChildScrollPane>();
-//		this.sentencePanels = new ArrayList<SentencePanel>();
-		
-//		this.spanLimit = spanLimit;
+
 		this.translationsList = completionModel.getTranslationOptions();
 		
 		// Create text areas
@@ -63,8 +66,11 @@ public class PrimaryPanel extends JScrollPane {
 			targetTextArea.add(new TextCompletionArea(completionModel));
 			SentencePanelModel sentencePanelModel = new SentencePanelModel(sourceSentence,spanLimit,translationsList);
 			childScrollPanes.add(new ChildScrollPane(sentencePanelModel));
-//			sentencePanels.add(new SentencePanel(sentencePanelModel));
 		}
+		
+		Set<? extends AWTKeyStroke> forwardFocusKeys = Collections.singleton(KeyStroke.getKeyStroke("TAB"));
+		Set<? extends AWTKeyStroke> backwardFocusKeys = Collections.singleton(KeyStroke.getKeyStroke("shift TAB"));
+
 		
 		// Configure and lay out text areas
 		Iterator<JTextArea> sourceTextAreas = sourceTextArea.iterator();
@@ -72,6 +78,7 @@ public class PrimaryPanel extends JScrollPane {
 		for (int i=0; sourceTextAreas.hasNext() && targetTextAreas.hasNext(); i++) {
 			
 				final JTextArea sourceSentenceArea = sourceTextAreas.next();
+				sourceSentenceArea.setFocusable(false);
 				sourceSentenceArea.addMouseListener(listener);
 				sourceSentenceArea.setLineWrap(true);
 				sourceSentenceArea.setWrapStyleWord(true);
@@ -80,30 +87,24 @@ public class PrimaryPanel extends JScrollPane {
 			
 
 				final TextCompletionArea targetSentenceArea = targetTextAreas.next();
+				targetSentenceArea.setFocusable(true);
+				targetSentenceArea.setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, forwardFocusKeys);
+				targetSentenceArea.setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, backwardFocusKeys);
 				targetSentenceArea.setLineWrap(true);
 				contentPane.add(targetSentenceArea);
 				
 				final JPanel sentencePanel = new JPanel();
-				ChildScrollPane childScrollPane = childScrollPanes.get(i);
-				sentencePanel.add(childScrollPane);
 				sentencePanel.setLayout(new BoxLayout(sentencePanel, BoxLayout.PAGE_AXIS));
 				contentPane.add(sentencePanel);
-				
-//				childScrollPane.doLayout();
-//				Rectangle bounds = childScrollPane.getViewportBorderBounds();
-//				System.out.println(bounds);
-//				Dimension d = new Dimension(bounds.width,bounds.height);
-//				
-//				childScrollPane.getViewport().getView().setPreferredSize(d);
-//				PrimaryPanel.this.validate();
-//				PrimaryPanel.this.repaint();
-//				
 				
 				final int index = i;
 				
 				JPanel buttonPanel = new JPanel();
 				final JButton more = new JButton("+");
 				final JButton less = new JButton("-");
+				
+				more.setFocusable(false);
+				less.setFocusable(false);
 				
 				more.addActionListener(new ActionListener(){
 					@Override
@@ -151,26 +152,34 @@ public class PrimaryPanel extends JScrollPane {
 					}		
 				});
 				
-				more.setEnabled(false);
+				more.setEnabled(true);
+				less.setEnabled(false);
 				buttonPanel.add(more);
 				buttonPanel.add(less);
+				
+				targetSentenceArea.addFocusListener(new FocusListener(){
+
+					@Override
+					public void focusGained(FocusEvent e) {
+						more.doClick(0);
+					}
+
+					@Override
+					public void focusLost(FocusEvent e) {
+						less.doClick(0);
+					}
+					
+				});
 				
 				contentPane.add(buttonPanel);
 							
 		}
-//		contentPane.doLayout();
 		
 		int displayWidth = Displays.getMaxDisplayWidth();
 		Dimension size = new Dimension((int) displayWidth, (int) contentPane.getPreferredSize().getHeight());
 		this.setMinimumSize(size);
 		this.setPreferredSize(size);
 		this.setSize(size);
-		
-		int viewportWidth = (int) this.getViewportBorderBounds().getWidth();
-		for (Component c : contentPane.getComponents()) {
-			int height = (int) c.getPreferredSize().getHeight();
-			c.setPreferredSize(new Dimension(viewportWidth,height));
-		}
 		
 		PrimaryPanel.this.validate();
 		PrimaryPanel.this.repaint();

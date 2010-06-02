@@ -48,8 +48,8 @@ public class TextCompletionArea extends JTextArea implements DocumentListener {
 
 		InputMap inputMap = getInputMap();
 		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), Actions.NEW_LINE);
-		inputMap.put(KeyStroke.getKeyStroke("ENTER"), Actions.COMPLETE);
-		inputMap.put(KeyStroke.getKeyStroke("TAB"), Actions.COMPLETE_WITH_SPACE);
+		inputMap.put(KeyStroke.getKeyStroke("ENTER"), Actions.COMPLETE_WITH_SPACE);
+		//inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_TAB,Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), Actions.COMPLETE_WITH_SPACE);
 
 		ActionMap actionMap = getActionMap();
 		actionMap.put(Actions.NEW_LINE, new AbstractAction() {
@@ -92,7 +92,7 @@ public class TextCompletionArea extends JTextArea implements DocumentListener {
 
 	@Override
 	public void insertUpdate(DocumentEvent e) {
-
+		
 		if (! completionInProgress) {
 			try {
 
