@@ -4,13 +4,11 @@ import java.awt.AWTKeyStroke;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.KeyboardFocusManager;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -79,7 +77,6 @@ public class PrimaryPanel extends JScrollPane {
 			
 				final JTextArea sourceSentenceArea = sourceTextAreas.next();
 				sourceSentenceArea.setFocusable(false);
-				sourceSentenceArea.addMouseListener(listener);
 				sourceSentenceArea.setLineWrap(true);
 				sourceSentenceArea.setWrapStyleWord(true);
 				sourceSentenceArea.setEditable(false);
@@ -99,17 +96,16 @@ public class PrimaryPanel extends JScrollPane {
 				
 				final int index = i;
 				
-				JPanel buttonPanel = new JPanel();
+				final JPanel buttonPanel = new JPanel();
 				final JButton more = new JButton("+");
 				final JButton less = new JButton("-");
 				
 				more.setFocusable(false);
 				less.setFocusable(false);
 				
-				more.addActionListener(new ActionListener(){
+				final Runnable expandSentencePanel = new Runnable() {
 					@Override
-					public void actionPerformed(ActionEvent e) {
-						
+					public void run() {
 						sentencePanel.add(childScrollPanes.get(index)); 
 						sentencePanel.setPreferredSize(childScrollPanes.get(index).getPreferredSize());
 						{
@@ -127,12 +123,25 @@ public class PrimaryPanel extends JScrollPane {
 						PrimaryPanel.this.validate();
 						PrimaryPanel.this.repaint();
 						
+						contentPane.scrollRectToVisible(
+								new Rectangle(
+										sourceSentenceArea.getX(),
+										sourceSentenceArea.getY(),
+										sourceSentenceArea.getWidth(),
+										sourceSentenceArea.getHeight() 
+										+ targetSentenceArea.getHeight() 
+										+ sentencePanel.getHeight()
+										+ buttonPanel.getHeight()
+						));
+
+						
 					}
-				});
+					
+				};
 				
-				less.addActionListener(new ActionListener(){
+				final Runnable contractSentencePanel = new Runnable() {
 					@Override
-					public void actionPerformed(ActionEvent e) {
+					public void run() {
 						sentencePanel.remove(childScrollPanes.get(index));
 						sentencePanel.setPreferredSize(new Dimension(0,0));
 						{
@@ -149,6 +158,21 @@ public class PrimaryPanel extends JScrollPane {
 						
 						PrimaryPanel.this.validate();
 						PrimaryPanel.this.repaint();
+					}
+					
+				};
+				
+				more.addActionListener(new ActionListener(){
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						expandSentencePanel.run();
+					}
+				});
+				
+				less.addActionListener(new ActionListener(){
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						contractSentencePanel.run();
 					}		
 				});
 				
@@ -161,12 +185,12 @@ public class PrimaryPanel extends JScrollPane {
 
 					@Override
 					public void focusGained(FocusEvent e) {
-						more.doClick(0);
+						expandSentencePanel.run();
 					}
 
 					@Override
 					public void focusLost(FocusEvent e) {
-						less.doClick(0);
+						contractSentencePanel.run();
 					}
 					
 				});
@@ -185,12 +209,5 @@ public class PrimaryPanel extends JScrollPane {
 		PrimaryPanel.this.repaint();
 		
 	}
-	
-	private final MouseListener listener = new MouseAdapter() {
-		@Override
-		public void mouseClicked(MouseEvent e) {
-			System.out.println(e);
-		}
-	};
 
 }
