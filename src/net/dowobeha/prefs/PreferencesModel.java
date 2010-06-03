@@ -5,8 +5,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.prefs.Preferences;
 
-import javax.swing.JFormattedTextField.AbstractFormatter;
-
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 
@@ -21,23 +19,13 @@ public class PreferencesModel {
 	 * Map from preference name to runnable actions that should be run whenever
 	 * the associated preference value changes.
 	 */
-	private final SetMultimap<String, Runnable> actionMap;
+	private final SetMultimap<PreferenceKey, Runnable> actionMap;
 
 	/**
-	 * Map from preference name to default value
+	 * Map from group to preference
 	 */
-	private final Map<String, String> defaults;
+	private final SetMultimap<GroupKey, PreferenceKey> groups;
 
-	/**
-	 * Map from group name to preference name
-	 */
-	private final SetMultimap<String, String> groups;
-
-	/**
-	 * Map from preference name to text field formatter
-	 */
-	private final Map<String,AbstractFormatter> formatters;
-	
 	/**
 	 * Map from Java class to preference model
 	 */
@@ -73,27 +61,16 @@ public class PreferencesModel {
 	private PreferencesModel(Class<?> c) {
 		this.preferences = Preferences.userNodeForPackage(c);
 		this.actionMap = HashMultimap.create();
-		this.defaults = new HashMap<String, String>();
 		this.groups = HashMultimap.create();
-		this.formatters = new HashMap<String,AbstractFormatter>();
 	}
 
-	/**
-	 * Gets the text field formatter for the given preference.
-	 * 
-	 * @param preference Name of preference
-	 * @return Text field formatter for the given preference
-	 */
-	public AbstractFormatter getFormatter(String preference) {
-		return formatters.get(preference);
-	}
 	
 	/**
 	 * Gets the names of all groups.
 	 * 
 	 * @return Set of names of all groups
 	 */
-	public Set<String> getGroups() {
+	public Set<GroupKey> getGroups() {
 		return groups.keySet();
 	}
 
@@ -104,34 +81,25 @@ public class PreferencesModel {
 	 *            Name of group
 	 * @return Names of all preferences in the specified group
 	 */
-	public Set<String> getPreferencesInGroup(String group) {
+	public Set<PreferenceKey> getPreferencesInGroup(GroupKey group) {
 		return groups.get(group);
 	}
 
-	public String getDefaultValue(String preference) {
-		return defaults.get(preference);
-	}
 
-	public void setDefaultValue(String preference, String defaultValue) {
-		defaults.put(preference, defaultValue);
-	}
-
-	public void setValue(String preference, String value) {
-		preferences.put(preference, value);
-		for (Runnable action : actionMap.get(preference)) {
+	public void setValue(PreferenceKey preferenceKey, String value) {
+		preferences.put(preferenceKey.toString(), value);
+		for (Runnable action : actionMap.get(preferenceKey)) {
 			action.run();
 		}
 	}
 
-	public String getValue(String preference) {
-		return preferences.get(preference, defaults.get(preference));
+	public String getValue(PreferenceKey preferenceKey) {
+		return preferences.get(preferenceKey.toString(), preferenceKey.getDefaultValue());
 	}
 
-	public void register(Runnable action, AbstractFormatter formatter, String group, String preference) {
-		actionMap.put(preference, action);
-		groups.put(group, preference);
-		formatters.put(preference, formatter);
+	public void register(PreferenceKey preferenceKey, Runnable action) {
+		actionMap.put(preferenceKey, action);
+		groups.put(preferenceKey.getGroup(), preferenceKey);
 	}
 
-	public static final String GROUP_KEYBOARD_SHORTCUTS = "Keyboard Shortcuts";
 }

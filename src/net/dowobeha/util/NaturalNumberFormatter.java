@@ -7,6 +7,15 @@ import javax.swing.JFormattedTextField.AbstractFormatter;
 @SuppressWarnings("serial")
 public class NaturalNumberFormatter extends AbstractFormatter {
 
+	private NaturalNumberFormatter() {
+		// This space intentionally left blank
+	}
+	
+	private static final NaturalNumberFormatter formatter = new NaturalNumberFormatter();
+	public static NaturalNumberFormatter getInstance() {
+		return formatter;
+	}
+	
 	@Override
 	public Object stringToValue(String text) throws ParseException {
 		try {

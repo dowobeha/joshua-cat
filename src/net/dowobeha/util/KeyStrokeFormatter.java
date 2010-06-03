@@ -8,6 +8,15 @@ import javax.swing.JFormattedTextField.AbstractFormatter;
 @SuppressWarnings("serial")
 public class KeyStrokeFormatter extends AbstractFormatter {
 
+	private KeyStrokeFormatter() {
+		// This space intentionally left blank
+	}
+	
+	private static final KeyStrokeFormatter formatter = new KeyStrokeFormatter();
+	public static KeyStrokeFormatter getInstance() {
+		return formatter;
+	}
+	
 	@Override
 	public Object stringToValue(String text) throws ParseException {
 		KeyStroke keyStroke = KeyStroke.getKeyStroke(text);

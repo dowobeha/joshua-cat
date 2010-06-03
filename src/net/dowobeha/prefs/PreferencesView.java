@@ -20,7 +20,7 @@ public class PreferencesView extends JFrame {
 	/**
 	 * Map from preference name to last valid preference value.
 	 */
-	private final Map<String,String> lastValidValues;
+	private final Map<PreferenceKey,String> lastValidValues;
 	
 	/**
 	 * Constructs a new view for the provided model.
@@ -28,17 +28,17 @@ public class PreferencesView extends JFrame {
 	 * @param model Preferences model
 	 */
 	public PreferencesView(final PreferencesModel model) {
-		this.lastValidValues = new HashMap<String,String>();
+		this.lastValidValues = new HashMap<PreferenceKey,String>();
 		
 		JTabbedPane tabs = new JTabbedPane();
 		
-		for (String group : model.getGroups()) {
+		for (GroupKey group : model.getGroups()) {
 			
 			JPanel panel = new JPanel(new GridLayout(0,2));
 			
-			for (final String preferenceName : model.getPreferencesInGroup(group)) {
+			for (final PreferenceKey preference : model.getPreferencesInGroup(group)) {
 
-				final AbstractFormatter formatter = model.getFormatter(preferenceName);
+				final AbstractFormatter formatter = preference.getFormatter();//model.getFormatter(preferenceName);
 				
 				AbstractFormatterFactory formatterFactory = new AbstractFormatterFactory() {
 					@Override
@@ -47,16 +47,17 @@ public class PreferencesView extends JFrame {
 					}
 
 				};
-				String defaultValue = model.getDefaultValue(preferenceName);
-				final JFormattedTextField textField = new JFormattedTextField(formatterFactory,defaultValue); 
+				String defaultValue = preference.getDefaultValue();//model.getDefaultValue(preferenceName);
+				final JFormattedTextField textField = 
+					new JFormattedTextField(formatterFactory,defaultValue); 
 		
-				String lastValidValue = model.getValue(preferenceName);
-				this.lastValidValues.put(preferenceName, lastValidValue);
+				String lastValidValue = model.getValue(preference);
+				this.lastValidValues.put(preference, lastValidValue);
 				textField.setText(lastValidValue);
 				
 				if (! textField.isEditValid()) {
 					textField.setValue(defaultValue);
-					this.lastValidValues.put(preferenceName, defaultValue);
+					this.lastValidValues.put(preference, defaultValue);
 				}
 				
 //				textField.addPropertyChangeListener("textFormatter",new PropertyChangeListener(){
@@ -65,26 +66,26 @@ public class PreferencesView extends JFrame {
 					@Override
 					public void propertyChange(PropertyChangeEvent evt) {
 						String text = textField.getText();
-						if (! lastValidValues.get(preferenceName).equals(text)) {
+						if (! lastValidValues.get(preference).equals(text)) {
 							if (text == null || text.trim().isEmpty()) {
-								textField.setText(model.getDefaultValue(preferenceName));
+								textField.setText(preference.getDefaultValue());
 							} else {
 								if (textField.isEditValid()) {
-									model.setValue(preferenceName, text);
-									lastValidValues.put(preferenceName, text);
+									model.setValue(preference, text);
+									lastValidValues.put(preference, text);
 								} else {
-									textField.setText(lastValidValues.get(preferenceName));
+									textField.setText(lastValidValues.get(preference));
 								}
 							}
 						}
 					}		
 				});
 						
-				panel.add(new JLabel(preferenceName));
+				panel.add(new JLabel(preference.toString()));
 				panel.add(textField);
 			}
 			
-			tabs.addTab(group, panel);
+			tabs.addTab(group.toString(), panel);
 		}
 		
 		this.add(tabs);
