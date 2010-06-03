@@ -26,9 +26,7 @@ public class Main {
 		
 		TranslationOptions translations = new TranslationOptions(corpus);
 		
-		int spanLimit = 5;
-
-		PrimaryPanel primaryPanel = new PrimaryPanel(sourceText, new TranslationOptionsCompletionModel(translations),spanLimit);
+		PrimaryPanel primaryPanel = new PrimaryPanel(sourceText, new TranslationOptionsCompletionModel(translations));
 		
 		window.setContent(primaryPanel);
 		

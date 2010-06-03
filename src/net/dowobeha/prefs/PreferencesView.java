@@ -59,22 +59,24 @@ public class PreferencesView extends JFrame {
 					this.lastValidValues.put(preferenceName, defaultValue);
 				}
 				
-				textField.addPropertyChangeListener("textFormatter",new PropertyChangeListener(){
+//				textField.addPropertyChangeListener("textFormatter",new PropertyChangeListener(){
+				textField.addPropertyChangeListener(new PropertyChangeListener(){
+
 					@Override
 					public void propertyChange(PropertyChangeEvent evt) {
-
 						String text = textField.getText();
-						if (text == null || text.trim().isEmpty()) {
-							textField.setText(model.getDefaultValue(preferenceName));
-						} else {
-							if (textField.isEditValid()) {
-								model.setValue(preferenceName, text);
-								lastValidValues.put(preferenceName, text);
+						if (! lastValidValues.get(preferenceName).equals(text)) {
+							if (text == null || text.trim().isEmpty()) {
+								textField.setText(model.getDefaultValue(preferenceName));
 							} else {
-								textField.setText(lastValidValues.get(preferenceName));
+								if (textField.isEditValid()) {
+									model.setValue(preferenceName, text);
+									lastValidValues.put(preferenceName, text);
+								} else {
+									textField.setText(lastValidValues.get(preferenceName));
+								}
 							}
 						}
-
 					}		
 				});
 						

@@ -2,11 +2,10 @@ package joshua.cat.view;
 
 import java.awt.AWTKeyStroke;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.KeyboardFocusManager;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
@@ -20,7 +19,6 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -32,6 +30,7 @@ import net.dowobeha.prefs.PreferencesModel;
 import static net.dowobeha.prefs.PreferencesModel.GROUP_KEYBOARD_SHORTCUTS;
 import net.dowobeha.ui.ScrollablePanel;
 import net.dowobeha.util.KeyStrokeFormatter;
+import net.dowobeha.util.NaturalNumberFormatter;
 
 import joshua.cat.SourceText;
 import joshua.cat.TranslationOptions;
@@ -55,11 +54,15 @@ public class PrimaryPanel extends JScrollPane {
 	private static final String FORWARD_FOCUS_TRAVERSAL = "Forward focus traversal";
 	private static final String BACKWARD_FOCUS_TRAVERSAL = "Backward focus traversal";
 	
-	public PrimaryPanel(SourceText sourceText, TranslationOptionsCompletionModel completionModel, int spanLimit) {
+	public PrimaryPanel(final SourceText sourceText, TranslationOptionsCompletionModel completionModel) {
 		super(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		final JPanel contentPane = new ScrollablePanel(this,true,false,4);
 		contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.PAGE_AXIS));
 		this.setViewportView(contentPane);
+		
+		final PreferencesModel preferencesModel = PreferencesModel.get(TranslateWindow.class.getClass());
+		final String SPAN_LIMIT = "Span limit";
+		
 		
 		this.sourceTextArea = new ArrayList<JTextArea>();
 		this.targetTextArea = new ArrayList<TextCompletionArea>();
@@ -71,9 +74,43 @@ public class PrimaryPanel extends JScrollPane {
 		for (String sourceSentence : sourceText) {
 			sourceTextArea.add(new JTextArea(sourceSentence));
 			targetTextArea.add(new TextCompletionArea(completionModel));
-			SentencePanelModel sentencePanelModel = new SentencePanelModel(sourceSentence,spanLimit,translationsList);
-			childScrollPanes.add(new ChildScrollPane(sentencePanelModel));
+			
 		}
+		
+
+		preferencesModel.setDefaultValue(SPAN_LIMIT, "5");
+
+		
+		Runnable spanLimitAction = new Runnable() {
+			
+			@Override
+			public void run() {
+				String value = preferencesModel.getValue(SPAN_LIMIT);
+				int spanLimit;
+				try {
+					spanLimit = Integer.valueOf(value);
+				} catch (NumberFormatException e) {
+					spanLimit = Integer.valueOf(preferencesModel.getDefaultValue(SPAN_LIMIT));
+				}
+				
+				for (ChildScrollPane child : childScrollPanes) {
+					Container parent = child.getParent();
+					if (parent != null) {
+						parent.remove(child);
+					}
+				}
+				childScrollPanes.clear();
+				for (String sourceSentence : sourceText) {
+					SentencePanelModel sentencePanelModel = new SentencePanelModel(sourceSentence,spanLimit,translationsList);
+					childScrollPanes.add(new ChildScrollPane(sentencePanelModel));
+				}
+			}
+			
+		};
+		
+		preferencesModel.register(spanLimitAction, new NaturalNumberFormatter(), "Options", SPAN_LIMIT);
+		
+		spanLimitAction.run();
 		
 		// Configure and lay out text areas
 		Iterator<JTextArea> sourceTextAreas = sourceTextArea.iterator();
@@ -103,18 +140,18 @@ public class PrimaryPanel extends JScrollPane {
 				final int index = i;
 				
 //				buttonPanel.setLayout(new BorderLayout());
-				final JButton more = new JButton("+");
-				final JButton less = new JButton("-");
+//				final JButton more = new JButton("+");
+//				final JButton less = new JButton("-");
 				//buttonPanel.add(new JToggleButton("visible"));
 				final JCheckBox enabled = new JCheckBox("Sentence " + index);
 				enabled.setFocusable(false);
 				buttonPanel.add(enabled);
 				
-				more.putClientProperty("JComponent.sizeVariant", "mini");
-				less.putClientProperty("JComponent.sizeVariant", "mini");
-				
-				more.setFocusable(false);
-				less.setFocusable(false);
+//				more.putClientProperty("JComponent.sizeVariant", "mini");
+//				less.putClientProperty("JComponent.sizeVariant", "mini");
+//				
+//				more.setFocusable(false);
+//				less.setFocusable(false);
 				
 				final Runnable expandSentencePanel = new Runnable() {
 					@Override
@@ -195,22 +232,22 @@ public class PrimaryPanel extends JScrollPane {
 					
 				});
 				
-				more.addActionListener(new ActionListener(){
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						expandSentencePanel.run();
-					}
-				});
-				
-				less.addActionListener(new ActionListener(){
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						contractSentencePanel.run();
-					}		
-				});
-				
-				more.setEnabled(true);
-				less.setEnabled(false);
+//				more.addActionListener(new ActionListener(){
+//					@Override
+//					public void actionPerformed(ActionEvent e) {
+//						expandSentencePanel.run();
+//					}
+//				});
+//				
+//				less.addActionListener(new ActionListener(){
+//					@Override
+//					public void actionPerformed(ActionEvent e) {
+//						contractSentencePanel.run();
+//					}		
+//				});
+//				
+//				more.setEnabled(true);
+//				less.setEnabled(false);
 //				buttonPanel.add(more);
 //				buttonPanel.add(less);
 				
@@ -234,7 +271,6 @@ public class PrimaryPanel extends JScrollPane {
 							
 		}
 		
-		final PreferencesModel preferencesModel = PreferencesModel.get(TranslateWindow.class.getClass());
 		preferencesModel.setDefaultValue(FORWARD_FOCUS_TRAVERSAL, KeyStroke.getKeyStroke("TAB").toString());
 		preferencesModel.setDefaultValue(BACKWARD_FOCUS_TRAVERSAL, KeyStroke.getKeyStroke("shift TAB").toString());
 
