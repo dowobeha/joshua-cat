@@ -96,6 +96,7 @@ public class ChildScrollPane extends JScrollPane {
 
 						
 						comboBoxes[row][cell] = new ComboBox(row,cell);
+						comboBoxes[row][cell].setFocusable(false);
 						this.add(comboBoxes[row][cell],c);
 						
 						this.doLayout();

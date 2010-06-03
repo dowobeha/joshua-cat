@@ -2,7 +2,7 @@
 package joshua.cat.model;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
 
 import joshua.cat.TranslationOptions;
 
@@ -22,7 +22,7 @@ public class SentencePanelModel {
 		this(sourceSentence,spanLimit,Arrays.asList(translationsList));
 	}
 	
-	public SentencePanelModel(String sourceSentence, int spanLimit, List<TranslationOptions> translationsList) {
+	public SentencePanelModel(String sourceSentence, int spanLimit, Collection<TranslationOptions> translationsList) {
 		Preconditions.checkNotNull(sourceSentence);
 		Preconditions.checkState(spanLimit > 0);
 		Preconditions.checkNotNull(translationsList);

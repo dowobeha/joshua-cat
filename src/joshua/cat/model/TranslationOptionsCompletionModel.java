@@ -2,6 +2,7 @@ package joshua.cat.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.TreeSet;
@@ -15,9 +16,9 @@ public class TranslationOptionsCompletionModel extends ListCompletionModel {
 	private static final Logger logger =
 		Logger.getLogger(TranslationOptionsCompletionModel.class.getName());
 	
-	private final List<TranslationOptions> translationsList;
+	private final Collection<TranslationOptions> translationsList;
 	
-	public List<TranslationOptions> getTranslationOptions() {
+	public Collection<TranslationOptions> getTranslationOptions() {
 		return this.translationsList;
 	}
 	
@@ -25,7 +26,7 @@ public class TranslationOptionsCompletionModel extends ListCompletionModel {
 		this(locale, Arrays.asList(translationsList));
 	}
 	
-	public TranslationOptionsCompletionModel(Locale locale, List<TranslationOptions> translationsList) {
+	public TranslationOptionsCompletionModel(Locale locale, Collection<TranslationOptions> translationsList) {
 		super(locale, getList(translationsList));
 		this.translationsList = translationsList;
 	}
@@ -34,11 +35,11 @@ public class TranslationOptionsCompletionModel extends ListCompletionModel {
 		this(Arrays.asList(translationsList));
 	}
 	
-	public TranslationOptionsCompletionModel(List<TranslationOptions> translationsList) {
+	public TranslationOptionsCompletionModel(Collection<TranslationOptions> translationsList) {
 		this(Locale.getDefault(),translationsList);
 	}
 	
-	private static List<String> getList(List<TranslationOptions> translationsList) {
+	private static List<String> getList(Collection<TranslationOptions> translationsList) {
 		
 		TreeSet<String> words = new TreeSet<String>();
 		

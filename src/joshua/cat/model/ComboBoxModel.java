@@ -2,7 +2,7 @@
 package joshua.cat.model;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
 
 import javax.swing.DefaultComboBoxModel;
 
@@ -12,14 +12,14 @@ import joshua.cat.TranslationOptions;
 @SuppressWarnings("serial")
 public class ComboBoxModel extends DefaultComboBoxModel {
 
-	private final List<TranslationOptions> translationsList;
+	private final Collection<TranslationOptions> translationsList;
 	private final String sourcePhrase;
 	
 	public ComboBoxModel(String sourcePhrase, TranslationOptions... translationsList) {
 		this(sourcePhrase,Arrays.asList(translationsList));
 	}
 	
-	public ComboBoxModel(String sourcePhrase, List<TranslationOptions> translationsList) {
+	public ComboBoxModel(String sourcePhrase, Collection<TranslationOptions> translationsList) {
 		this.translationsList = translationsList;
 		this.sourcePhrase = sourcePhrase;
 		

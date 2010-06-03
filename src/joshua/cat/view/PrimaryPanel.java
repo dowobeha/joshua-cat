@@ -9,7 +9,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -18,6 +21,7 @@ import java.util.logging.Logger;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -44,7 +48,7 @@ public class PrimaryPanel extends JScrollPane {
 	private final List<TextCompletionArea> targetTextArea;
 	private final List<ChildScrollPane> childScrollPanes;
 	
-	private final List<TranslationOptions> translationsList;
+	private final Collection<TranslationOptions> translationsList;
 	
 	public PrimaryPanel(SourceText sourceText, TranslationOptionsCompletionModel completionModel, int spanLimit) {
 		super(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -75,6 +79,9 @@ public class PrimaryPanel extends JScrollPane {
 		Iterator<TextCompletionArea> targetTextAreas = targetTextArea.iterator();
 		for (int i=0; sourceTextAreas.hasNext() && targetTextAreas.hasNext(); i++) {
 			
+			final JPanel buttonPanel = new JPanel();
+			contentPane.add(buttonPanel);
+			
 				final JTextArea sourceSentenceArea = sourceTextAreas.next();
 				sourceSentenceArea.setFocusable(false);
 				sourceSentenceArea.setLineWrap(true);
@@ -96,9 +103,16 @@ public class PrimaryPanel extends JScrollPane {
 				
 				final int index = i;
 				
-				final JPanel buttonPanel = new JPanel();
+//				buttonPanel.setLayout(new BorderLayout());
 				final JButton more = new JButton("+");
 				final JButton less = new JButton("-");
+				//buttonPanel.add(new JToggleButton("visible"));
+				final JCheckBox enabled = new JCheckBox("Sentence " + index);
+				enabled.setFocusable(false);
+				buttonPanel.add(enabled);
+				
+				more.putClientProperty("JComponent.sizeVariant", "mini");
+				less.putClientProperty("JComponent.sizeVariant", "mini");
 				
 				more.setFocusable(false);
 				less.setFocusable(false);
@@ -117,16 +131,19 @@ public class PrimaryPanel extends JScrollPane {
 							contentPane.setPreferredSize(new Dimension(viewportWidth,height));
 						}
 						
-						more.setEnabled(false);
-						less.setEnabled(true);
+						if (! enabled.isSelected()) {
+							enabled.setSelected(true);
+						}
+//						more.setEnabled(false);
+//						less.setEnabled(true);
 						
 						PrimaryPanel.this.validate();
 						PrimaryPanel.this.repaint();
 						
 						contentPane.scrollRectToVisible(
 								new Rectangle(
-										sourceSentenceArea.getX(),
-										sourceSentenceArea.getY(),
+										buttonPanel.getX(),
+										buttonPanel.getY(),
 										sourceSentenceArea.getWidth(),
 										sourceSentenceArea.getHeight() 
 										+ targetSentenceArea.getHeight() 
@@ -153,14 +170,31 @@ public class PrimaryPanel extends JScrollPane {
 							contentPane.setPreferredSize(new Dimension(viewportWidth,height));
 						}
 						
-						more.setEnabled(true);
-						less.setEnabled(false);
+						if (enabled.isSelected()) {
+						enabled.setSelected(false);
+						}
+//						more.setEnabled(true);
+//						less.setEnabled(false);
 						
 						PrimaryPanel.this.validate();
 						PrimaryPanel.this.repaint();
 					}
 					
 				};
+				
+				enabled.addItemListener(new ItemListener(){
+
+					@Override
+					public void itemStateChanged(ItemEvent e) {
+						if (e.getStateChange()==ItemEvent.SELECTED) {
+							expandSentencePanel.run();
+						} else {
+							contractSentencePanel.run();
+						}
+					}
+
+					
+				});
 				
 				more.addActionListener(new ActionListener(){
 					@Override
@@ -178,24 +212,26 @@ public class PrimaryPanel extends JScrollPane {
 				
 				more.setEnabled(true);
 				less.setEnabled(false);
-				buttonPanel.add(more);
-				buttonPanel.add(less);
+//				buttonPanel.add(more);
+//				buttonPanel.add(less);
 				
 				targetSentenceArea.addFocusListener(new FocusListener(){
 
 					@Override
 					public void focusGained(FocusEvent e) {
+						//enabled.doClick();
 						expandSentencePanel.run();
 					}
 
 					@Override
 					public void focusLost(FocusEvent e) {
 						contractSentencePanel.run();
+						//enabled.doClick();
 					}
 					
 				});
 				
-				contentPane.add(buttonPanel);
+				
 							
 		}
 		
