@@ -28,8 +28,10 @@ import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
 
+import net.dowobeha.prefs.PreferencesModel;
+import static net.dowobeha.prefs.PreferencesModel.GROUP_KEYBOARD_SHORTCUTS;
 import net.dowobeha.ui.ScrollablePanel;
-
+import net.dowobeha.util.KeyStrokeFormatter;
 
 import joshua.cat.SourceText;
 import joshua.cat.TranslationOptions;
@@ -49,6 +51,9 @@ public class PrimaryPanel extends JScrollPane {
 	private final List<ChildScrollPane> childScrollPanes;
 	
 	private final Collection<TranslationOptions> translationsList;
+	
+	private static final String FORWARD_FOCUS_TRAVERSAL = "Forward focus traversal";
+	private static final String BACKWARD_FOCUS_TRAVERSAL = "Backward focus traversal";
 	
 	public PrimaryPanel(SourceText sourceText, TranslationOptionsCompletionModel completionModel, int spanLimit) {
 		super(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -70,10 +75,6 @@ public class PrimaryPanel extends JScrollPane {
 			childScrollPanes.add(new ChildScrollPane(sentencePanelModel));
 		}
 		
-		Set<? extends AWTKeyStroke> forwardFocusKeys = Collections.singleton(KeyStroke.getKeyStroke("TAB"));
-		Set<? extends AWTKeyStroke> backwardFocusKeys = Collections.singleton(KeyStroke.getKeyStroke("shift TAB"));
-
-		
 		// Configure and lay out text areas
 		Iterator<JTextArea> sourceTextAreas = sourceTextArea.iterator();
 		Iterator<TextCompletionArea> targetTextAreas = targetTextArea.iterator();
@@ -92,8 +93,6 @@ public class PrimaryPanel extends JScrollPane {
 
 				final TextCompletionArea targetSentenceArea = targetTextAreas.next();
 				targetSentenceArea.setFocusable(true);
-				targetSentenceArea.setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, forwardFocusKeys);
-				targetSentenceArea.setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, backwardFocusKeys);
 				targetSentenceArea.setLineWrap(true);
 				contentPane.add(targetSentenceArea);
 				
@@ -234,6 +233,38 @@ public class PrimaryPanel extends JScrollPane {
 				
 							
 		}
+		
+		final PreferencesModel preferencesModel = PreferencesModel.get(TranslateWindow.class.getClass());
+		preferencesModel.setDefaultValue(FORWARD_FOCUS_TRAVERSAL, KeyStroke.getKeyStroke("TAB").toString());
+		preferencesModel.setDefaultValue(BACKWARD_FOCUS_TRAVERSAL, KeyStroke.getKeyStroke("shift TAB").toString());
+
+		Runnable focusTraversalAction = new Runnable() {
+			@Override
+			public void run() {
+				Set<? extends AWTKeyStroke> forwardFocusKeys = 
+					Collections.singleton(
+							KeyStroke.getKeyStroke(
+									preferencesModel.getValue(FORWARD_FOCUS_TRAVERSAL)));
+				Set<? extends AWTKeyStroke> backwardFocusKeys = 
+					Collections.singleton(
+							KeyStroke.getKeyStroke(
+									preferencesModel.getValue(BACKWARD_FOCUS_TRAVERSAL)));
+
+				
+				for (TextCompletionArea targetSentenceArea : targetTextArea) {
+					targetSentenceArea.setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, forwardFocusKeys);
+					targetSentenceArea.setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, backwardFocusKeys);
+				}
+			}
+			
+		};
+		
+		KeyStrokeFormatter formatter = new KeyStrokeFormatter();
+		
+		preferencesModel.register(focusTraversalAction,formatter,GROUP_KEYBOARD_SHORTCUTS,FORWARD_FOCUS_TRAVERSAL); 
+		preferencesModel.register(focusTraversalAction,formatter,GROUP_KEYBOARD_SHORTCUTS,BACKWARD_FOCUS_TRAVERSAL);
+		
+		focusTraversalAction.run();
 		
 		int displayWidth = Displays.getMaxDisplayWidth();
 		Dimension size = new Dimension((int) displayWidth, (int) contentPane.getPreferredSize().getHeight());

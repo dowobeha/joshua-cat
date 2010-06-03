@@ -8,6 +8,7 @@ import javax.swing.JMenuBar;
 
 import joshua.ui.StartupWindow;
 
+import net.dowobeha.prefs.PreferencesModel;
 import net.dowobeha.prefs.PreferencesView;
 import net.dowobeha.util.OperatingSystem;
 
@@ -44,12 +45,12 @@ public class TranslateMenu extends JMenuBar {
 		});
 		
 		OperatingSystem.defineMacPreferencesMenu(new Runnable(){
-			
-			final PreferencesView preferencesView = 
-				new PreferencesView(parent.getPreferencesModel());
-			
+						
 			@Override
 			public void run() {
+				PreferencesView preferencesView = 
+					new PreferencesView(PreferencesModel.get(TranslateWindow.class.getClass()));
+				
 				preferencesView.setVisible(true);
 			}
 		});

@@ -11,13 +11,10 @@ import javax.swing.JFrame;
 
 import joshua.ui.StartupWindow;
 
-import net.dowobeha.prefs.PreferencesModel;
 
 @SuppressWarnings("serial")
 public class TranslateWindow extends JFrame {
 
-	private final PreferencesModel preferencesModel;
-	
 	private final StartupWindow splashScreen;
 	
 	public TranslateWindow() {
@@ -35,7 +32,6 @@ public class TranslateWindow extends JFrame {
 		this.splashScreen.setVisible(true);
 		
 		
-		this.preferencesModel = PreferencesModel.get(this.getClass());
 		this.setJMenuBar(new TranslateMenu(this));
 		
 		
@@ -52,11 +48,7 @@ public class TranslateWindow extends JFrame {
 		this.splashScreen.setVisible(false);
 		this.setVisible(true);
 	}
-	
-	public PreferencesModel getPreferencesModel() {
-		return this.preferencesModel;
-	}
-	
+		
 	public StartupWindow getSplashScreen() {
 		return this.splashScreen;
 	}
