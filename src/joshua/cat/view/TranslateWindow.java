@@ -35,7 +35,7 @@ public class TranslateWindow extends JFrame {
 		this.splashScreen.setVisible(true);
 		
 		
-		this.preferencesModel = new PreferencesModel(this.getClass());
+		this.preferencesModel = PreferencesModel.get(this.getClass());
 		this.setJMenuBar(new TranslateMenu(this));
 		
 		

@@ -20,7 +20,18 @@ public class PreferencesModel  {
 	private final Map<String,String> defaults;
 	private final SetMultimap<String,String> groups;
 	
-	public PreferencesModel(Class<?> c) {
+	private static Map<Class<?>,PreferencesModel> classMap =
+		new HashMap<Class<?>,PreferencesModel>();
+	
+	public static PreferencesModel get(Class<?> c) {
+		if (! classMap.containsKey(c)) {
+			classMap.put(c, new PreferencesModel(c));
+		}
+		
+		return classMap.get(c);
+	}
+	
+	private PreferencesModel(Class<?> c) {
 		this.preferences = Preferences.userNodeForPackage(c);
 		this.actionMap = HashMultimap.create();
 		this.defaults = new HashMap<String,String>();
