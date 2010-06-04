@@ -41,15 +41,15 @@ public class TranslateMenu extends JMenuBar {
 			}
 			
 		});
-		
-		OperatingSystem.defineMacQuitMenu(new Runnable(){
+		final Runnable quitAction = new Runnable(){
 
 			@Override
 			public void run() {
 				System.exit(0);
 			}
 			
-		});
+		};
+		OperatingSystem.defineMacQuitMenu(quitAction);
 		
 		OperatingSystem.defineMacPreferencesMenu(new Runnable(){
 						
@@ -67,56 +67,98 @@ public class TranslateMenu extends JMenuBar {
 		JMenu file = new JMenu("File");
 		add(file);
 		
-		JMenu edit = new JMenu("Edit");
-		add(file);
-		
-		JMenuItem cut = new JMenuItem("Cut");
-		cut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X,controlMask));
-		cut.addActionListener(new ActionListener(){
-
+		JMenuItem open = new JMenuItem("Open...");
+		open.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O,controlMask));
+		open.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				TextCompletionArea inFocus = 
-					parent.getPrimaryPanel().getFocusedTextCompletionArea();
+				// TODO Auto-generated method stub
 				
-				inFocus.cut();
 			}
 			
 		});
+		file.add(open);
+		
+		JMenuItem saveAs = new JMenuItem("Save As...");
+		saveAs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,controlMask));
+		saveAs.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		});
+		file.add(saveAs);
+		
+		if (! OperatingSystem.isMac()) {
+			JMenuItem quit = new JMenuItem("Quit");
+			quit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q,controlMask));
+			quit.addActionListener(new ActionListener(){
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					quitAction.run();
+				}
+				
+			});
+			file.add(quit);
+		}
+		
+		JMenu edit = new JMenu("Edit");
+		add(edit);
+				
+		JMenuItem cut = new JMenuItem("Cut");
+		cut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X,controlMask));
+		cut.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					TextCompletionArea inFocus = 
+						parent.getPrimaryPanel().getFocusedTextCompletionArea();
+
+					inFocus.cut();
+				} catch (NullPointerException ex) {
+					// This space intentionally left blank
+				}
+			}		
+		});
+		edit.add(cut);
 		
 		JMenuItem copy = new JMenuItem("Copy");
 		copy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C,controlMask));
 		copy.addActionListener(new ActionListener(){
-
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				TextCompletionArea inFocus = 
-					parent.getPrimaryPanel().getFocusedTextCompletionArea();
-				
-				inFocus.copy();
-			}
-			
+				try {
+					TextCompletionArea inFocus = 
+						parent.getPrimaryPanel().getFocusedTextCompletionArea();
+
+					inFocus.copy();
+				} catch (NullPointerException ex) {
+					// This space intentionally left blank
+				}
+			}		
 		});
+		edit.add(copy);
 		
 		JMenuItem paste = new JMenuItem("Paste");
 		paste.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V,controlMask));
 		paste.addActionListener(new ActionListener(){
-
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				TextCompletionArea inFocus = 
-					parent.getPrimaryPanel().getFocusedTextCompletionArea();
-				
-				inFocus.paste();
+				try {
+					TextCompletionArea inFocus = 
+						parent.getPrimaryPanel().getFocusedTextCompletionArea();
+
+					inFocus.paste();
+				} catch (NullPointerException ex) {
+					// This space intentionally left blank
+				}
 			}
-			
 		});
-		
-		edit.add(cut);
-		edit.add(copy);
 		edit.add(paste);
 		
-		add(edit);
+		
 		
 	}
 	
