@@ -53,9 +53,6 @@ public class TextCompletionArea extends JTextArea implements DocumentListener {
 		InputMap inputMap = getInputMap();
 		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,controlMask), Actions.NEW_LINE);
 		inputMap.put(KeyStroke.getKeyStroke("ENTER"), Actions.COMPLETE_WITH_SPACE);
-		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_C,controlMask), DefaultEditorKit.copyAction);
-		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_X,controlMask), DefaultEditorKit.cutAction);
-		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_V,controlMask), DefaultEditorKit.pasteAction);
 	        
 		ActionMap actionMap = getActionMap();
 		actionMap.put(Actions.NEW_LINE, new AbstractAction() {

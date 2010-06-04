@@ -443,4 +443,13 @@ public class PrimaryPanel extends JScrollPane {
 		
 		contentPane.scrollRectToVisible(scrollTo);
 	}
+	
+	public TextCompletionArea getFocusedTextCompletionArea() {
+		for (TextCompletionArea targetText : targetTextArea) {
+			if (targetText.hasFocus()) {
+				return targetText;
+			}
+		}
+		return null;
+	}
 }

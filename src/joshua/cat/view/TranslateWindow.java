@@ -38,9 +38,10 @@ public class TranslateWindow extends JFrame {
 		
 	}
 	
-	
+	private PrimaryPanel primaryPanel;
 	
 	public void setContent(PrimaryPanel panel) {
+		this.primaryPanel = panel;
 		Container contentPane = this.getContentPane();
 		contentPane.removeAll();
 		contentPane.add(panel);
@@ -49,6 +50,10 @@ public class TranslateWindow extends JFrame {
 		this.setVisible(true);
 	}
 		
+	public PrimaryPanel getPrimaryPanel() {
+		return primaryPanel;
+	}
+	
 	public StartupWindow getSplashScreen() {
 		return this.splashScreen;
 	}
