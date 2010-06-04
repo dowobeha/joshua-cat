@@ -14,6 +14,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultEditorKit;
 
 import joshua.cat.model.TextCompletionModel;
 
@@ -31,6 +32,7 @@ public class TextCompletionArea extends JTextArea implements DocumentListener {
 	private static enum InputMode { TYPING, COMPLETING }
 
 	private boolean completionInProgress = false;
+//	private boolean pasting = false;
 	
 	private InputMode mode;
 
@@ -51,6 +53,9 @@ public class TextCompletionArea extends JTextArea implements DocumentListener {
 		InputMap inputMap = getInputMap();
 		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,controlMask), Actions.NEW_LINE);
 		inputMap.put(KeyStroke.getKeyStroke("ENTER"), Actions.COMPLETE_WITH_SPACE);
+		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_C,controlMask), DefaultEditorKit.copyAction);
+		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_X,controlMask), DefaultEditorKit.cutAction);
+		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_V,controlMask), DefaultEditorKit.pasteAction);
 	        
 		ActionMap actionMap = getActionMap();
 		actionMap.put(Actions.NEW_LINE, new AbstractAction() {
@@ -89,7 +94,6 @@ public class TextCompletionArea extends JTextArea implements DocumentListener {
 
 	@Override
 	public void changedUpdate(DocumentEvent e) {}
-
 
 	@Override
 	public void insertUpdate(DocumentEvent e) {

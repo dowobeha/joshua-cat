@@ -308,10 +308,11 @@ public class PrimaryPanel extends JScrollPane {
 			
 			{
 				// Define the action to be run
-				//   to allow keyboard scrolling of sentence panel
+				//   to define keyboard shortcuts in sentence panel
 				Runnable textCompletionAreaKeyAction = new Runnable() {
 					@Override
 					public void run() {
+							
 						final int sentencePanelScrollLeft = 
 							KeyStroke.getKeyStroke(
 									preferencesModel.getValue(SCROLL_SENTENCE_PANEL_LEFT)).getKeyCode();
@@ -339,8 +340,7 @@ public class PrimaryPanel extends JScrollPane {
 									childScrollPanes.get(index).scrollLeft();
 								} else if (keyCode==sentencePanelScrollRight) {
 									childScrollPanes.get(index).scrollRight();
-								} 
-								else if (keyCode==pageScrollDown) {
+								} else if (keyCode==pageScrollDown) {
 									scrollDown();
 								} else if (keyCode==pageScrollUp) {
 									scrollUp();

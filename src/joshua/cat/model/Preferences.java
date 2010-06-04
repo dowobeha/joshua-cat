@@ -29,7 +29,7 @@ public class Preferences {
 	}
 	
 	public enum Key implements PreferenceKey {
-		
+				
 		FORWARD_FOCUS_TRAVERSAL(
 				"Forward focus traversal", 
 				Group.KEYBOARD_SHORTCUTS,
