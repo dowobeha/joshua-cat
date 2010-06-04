@@ -15,7 +15,7 @@ public class SentencePanelModel {
 	
 	private final ComboBoxModel[][] models;
 	private final int numRows;
-	
+		
 	public SentencePanelModel(String sourceSentence, int spanLimit, TranslationOptions... translationsList) {
 		this(sourceSentence, spanLimit, Arrays.asList(translationsList));
 	}

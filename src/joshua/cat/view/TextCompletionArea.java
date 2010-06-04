@@ -45,12 +45,13 @@ public class TextCompletionArea extends JTextArea implements DocumentListener {
 
 
 		this.mode = InputMode.TYPING;
+		
+		int controlMask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 
 		InputMap inputMap = getInputMap();
-		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), Actions.NEW_LINE);
+		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,controlMask), Actions.NEW_LINE);
 		inputMap.put(KeyStroke.getKeyStroke("ENTER"), Actions.COMPLETE_WITH_SPACE);
-		//inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_TAB,Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()), Actions.COMPLETE_WITH_SPACE);
-
+	        
 		ActionMap actionMap = getActionMap();
 		actionMap.put(Actions.NEW_LINE, new AbstractAction() {
 			public void actionPerformed(ActionEvent ev) {

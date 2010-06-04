@@ -1,6 +1,9 @@
 package joshua.cat.model;
 
+import java.text.ParseException;
+
 import javax.swing.JFormattedTextField.AbstractFormatter;
+import javax.swing.text.MaskFormatter;
 
 import net.dowobeha.prefs.GroupKey;
 import net.dowobeha.prefs.PreferenceKey;
@@ -41,12 +44,56 @@ public class Preferences {
 				"shift TAB"
 		),
 		
+		SCROLL_SENTENCE_PANEL_LEFT(
+				"Scroll sentence panel left",
+				Group.KEYBOARD_SHORTCUTS,
+				KeyStrokeFormatter.getInstance(),
+				"shift LEFT"
+		),
+		
+		SCROLL_SENTENCE_PANEL_RIGHT(
+				"Scroll sentence panel right",
+				Group.KEYBOARD_SHORTCUTS,
+				KeyStrokeFormatter.getInstance(),
+				"shift RIGHT"
+		),
+		
+		SCROLL_PAGE_DOWN(
+				"Scroll page down",
+				Group.KEYBOARD_SHORTCUTS,
+				KeyStrokeFormatter.getInstance(),
+				"PAGE_DOWN"
+		),
+		
+		SCROLL_PAGE_UP(
+				"Scroll page up",
+				Group.KEYBOARD_SHORTCUTS,
+				KeyStrokeFormatter.getInstance(),
+				"PAGE_UP"
+		),
+		
+		SENTENCE_PANEL_HORIZONTAL_SCROLL_FACTOR(
+				"Sentence panel horizontal scroll factor",
+				Group.OPTIONS,
+				getFactorFormatter(),
+				"1.0"
+		),
+		
 		SPAN_LIMIT(
 				"Span limit",
 				Group.OPTIONS,
 				NaturalNumberFormatter.getInstance(),
 				"5"
 		);
+		
+		private static final AbstractFormatter getFactorFormatter() {
+			try {
+				return new MaskFormatter("#.#");
+			} catch (ParseException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
 		
 		private final String name;
 		private final Group group;

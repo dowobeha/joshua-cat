@@ -3,8 +3,10 @@ package joshua.cat.view;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -14,6 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 
+import joshua.cat.TranslationOptions;
 import joshua.cat.model.SentencePanelModel;
 import joshua.util.Colors;
 
@@ -24,14 +27,52 @@ public class ChildScrollPane extends JScrollPane {
 	private static final Logger logger =
 		Logger.getLogger(ChildScrollPane.class.getName());
 	
-	private final SentencePanelModel model;
+	private SentencePanelModel model;
 	private final ComboBoxMouseListener mouseListener;
+	private ChildPanel view;
+	
+	private double scrollFactor;
 	
 	public ChildScrollPane(SentencePanelModel model) {
 		super(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 		this.model = model;
 		this.mouseListener = new ComboBoxMouseListener();
+		this.scrollFactor = 1.0;
 		setViewportView(new ChildPanel(model.getWords()));
+	}
+	
+	protected void setViewportView(ChildPanel view) {
+		super.setViewportView(view);
+		this.view = view;
+	}
+	
+	public void setScrollFactor(double scrollFactor) {
+		this.scrollFactor = scrollFactor;
+	}
+	
+	public void reset(int spanLimit,Collection<TranslationOptions> translationsList) {
+		this.model = new SentencePanelModel(model.getSentence(),spanLimit,translationsList);
+		setViewportView(new ChildPanel(model.getWords()));
+	}
+	
+	public void scrollRight() {
+		Rectangle visible = this.getViewport().getViewRect();
+		
+		Rectangle scrollTo = new Rectangle(
+				(int) (visible.x + visible.width*scrollFactor),
+				visible.y,visible.width,visible.height);
+		
+		view.scrollRectToVisible(scrollTo);
+	}
+	
+	public void scrollLeft() {
+		Rectangle visible = this.getViewport().getViewRect();
+
+		Rectangle scrollTo = new Rectangle(
+				(int) (visible.x - visible.width*scrollFactor),
+				visible.y,visible.width,visible.height);
+
+		view.scrollRectToVisible(scrollTo);
 	}
 	
 	private class ChildPanel extends JPanel {
