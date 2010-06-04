@@ -1,12 +1,15 @@
 package joshua.cat.view;
 
+import java.awt.FileDialog;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 
+import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -84,8 +87,24 @@ public class TranslateMenu extends JMenuBar {
 		saveAs.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				
+				if (OperatingSystem.isMac()) {
+					FileDialog fileDialog = new FileDialog(parent,"Save As...",FileDialog.SAVE);
+					fileDialog.setVisible(true);
+					String fileName = fileDialog.getFile();
+					String dirName = fileDialog.getDirectory();
+					if (fileName != null) {
+						parent.getPrimaryPanel().saveTargetText(new File(dirName,fileName));
+					}
+				} else {
+					JFileChooser fileChooser = new JFileChooser();
+					fileChooser.setDialogTitle("Save As...");
+					if (fileChooser.showSaveDialog(parent) == JFileChooser.APPROVE_OPTION) {
+						File file = fileChooser.getSelectedFile();
+						if (file != null) {
+							parent.getPrimaryPanel().saveTargetText(file);
+						}
+					}
+				}
 			}
 			
 		});

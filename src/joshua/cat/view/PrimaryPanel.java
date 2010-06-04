@@ -12,6 +12,10 @@ import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -400,6 +404,28 @@ public class PrimaryPanel extends JScrollPane {
 
 	}
 
+	public void saveTargetText(File file) {
+		try {
+			String newline = System.getProperty("line.separator");
+			
+			file.createNewFile();
+			
+			BufferedWriter out = new BufferedWriter(new FileWriter(file));
+			
+			for (TextCompletionArea targetText : targetTextArea) {
+				String line = targetText.getText();
+				out.write(line);
+				out.write(newline);
+			}
+			
+			out.flush();
+			out.close();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public void scrollUp() {
 		Rectangle visible = this.getViewport().getViewRect();
 		
